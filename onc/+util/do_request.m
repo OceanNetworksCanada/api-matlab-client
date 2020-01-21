@@ -1,8 +1,6 @@
-
-function [result, duration, info] = do_request(url, filters, varargin)
+function [result, info] = do_request(url, filters, varargin)
     [timeout, showInfo, rawResponse, showProgress] = ...
-        util.param(varargin, 'timeout', 120, 'showInfo', false, ...
-                   'rawResponse', false, 'showProgress', false);
+        util.param(varargin, 'timeout', 120, 'showInfo', false, 'rawResponse', false, 'showProgress', false);
     
     % sanitize filters
     filters = util.sanitize_filters(filters);
@@ -13,7 +11,7 @@ function [result, duration, info] = do_request(url, filters, varargin)
     uri.Query = matlab.net.QueryParameter(filters);
     fullUrl = char(uri);
     
-    % prepare options
+    % prepare MATLAB request options
     options = matlab.net.http.HTTPOptions();
     options.ConnectTimeout = timeout;
     if rawResponse, options.ConvertResponse = false; end
@@ -29,10 +27,15 @@ function [result, duration, info] = do_request(url, filters, varargin)
     tic
     response = send(request, uri, options);
     duration = toc;
-    txtDuration = util.format_duration(duration);
-    if showInfo, fprintf('   Web Service response time: %s\n', txtDuration); end
-
-    status = response.StatusCode;
+    
+    % print duration
+    if showInfo
+        txtDuration = util.format_duration(duration);
+        fprintf('   Web Service response time: %s\n', txtDuration);
+    end
+    
+    % prepare result
+    status = double(response.StatusCode);
     switch status
         case 200
             % OK
@@ -62,6 +65,7 @@ function [result, duration, info] = do_request(url, filters, varargin)
             fprintf('\nERROR: The request failed with HTTP error %d\n', status)
     end
 
+    % prepare info.size only if the response is a file, otherwise 0
     size = 0;
     if status == 200
         hConLength = response.getFields('Content-Length');
@@ -73,5 +77,5 @@ function [result, duration, info] = do_request(url, filters, varargin)
         
     end
 
-    info = struct('status', status, 'size', size);
+    info = struct('status', status, 'size', size, 'duration', duration);
 end

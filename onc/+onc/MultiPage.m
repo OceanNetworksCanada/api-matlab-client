@@ -40,7 +40,7 @@ classdef MultiPage < handle
 
             % download first page
             tic
-            [response, duration] = this.doPageRequest(url, filters, service, extension);
+            [response, info] = this.doPageRequest(url, filters, service, extension);
             rNext = response.next;
 
             if ~isempty(rNext)
@@ -49,7 +49,7 @@ classdef MultiPage < handle
                 pageCount = 1;
                 pageEstimate = this.estimatePages(response, service);
                 if pageEstimate > 0
-                    timeEstimate = util.format_duration(pageEstimate * duration);
+                    timeEstimate = util.format_duration(pageEstimate * info.duration);
                     fprintf('Estimated approx. %d pages\n', pageEstimate);
                     fprintf('Estimated approx. %s to complete\n', timeEstimate);
                 end
@@ -74,7 +74,7 @@ classdef MultiPage < handle
             end
         end
 
-        function [response, duration] = doPageRequest(this, url, filters, service, extension)
+        function [response, info] = doPageRequest(this, url, filters, service, extension)
             %% Do a page request
             % Wraps the util.do_request method
             % Performs additional processing of the response for certain services
@@ -84,9 +84,9 @@ classdef MultiPage < handle
             % * service:   ([char]) One of: 'archivefiles', 'scalardata', 'rawdata'
             % * extension: ([char]) Extension to filter results with (for archivefiles service)
             %
-            % Returns: (struct) httr response and (float) request duration in seconds
+            % Returns: (struct) httr response and @TODO
 
-            [response, duration] = util.do_request(url, filters, 'timeout', this.timeout, 'showInfo', this.showInfo);
+            [response, info] = util.do_request(url, filters, 'timeout', this.timeout, 'showInfo', this.showInfo);
             
             if strcmp(service, 'archivefiles')
                 response = util.filter_by_extension(response, extension);

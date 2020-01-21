@@ -15,6 +15,6 @@ end
 global config;
 config.token = 'YOUR_TOKEN';
 config.production = true;
-config.showInfo = true;
+config.showInfo = false;
 config.outPath = 'output';
 config.timeout = 60;

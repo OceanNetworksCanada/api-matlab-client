@@ -3,7 +3,7 @@ classdef Service < handle
     % Provides generic functionality
     
     methods (Access = protected, Hidden = true)
-        function [result, duration, status] = doRequest(this, url, filters)
+        function [result, info] = doRequest(this, url, filters)
             %% A wrapper of util.do_request
             % Performs a request to the Onc API
             %
@@ -11,7 +11,7 @@ classdef Service < handle
             % * filters: (struct) Describes the data origin
             %
             % Returns: ([struct]) 
-            [result, duration, status] = util.do_request(url, filters, 'timeout', this.timeout, 'showInfo', this.showInfo);
+            [result, info] = util.do_request(url, filters, 'timeout', this.timeout, 'showInfo', this.showInfo);
         end
         
         function status = testUrl(this, url)
@@ -29,7 +29,7 @@ classdef Service < handle
             
             % run and time request
             response = send(request, uri, options);
-            status = response.StatusCode;
+            status = double(response.StatusCode);
         end
         
         

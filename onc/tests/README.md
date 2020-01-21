@@ -14,13 +14,15 @@ Although each test suite inherits from matlab.unittest.TestCase, each is written
 
 **TESTING REQUIREMENTS**
 
-1. MATLAB unit testing framework (usually included by default)
-2. Check "globals.m" to make sure default configuration (i.e. API token) is correct
+1. MATLAB unit testing framework (usually included)
+2. Verify that the default values in "globals.m" (i.e. API token) is complete and correct
 
 
 **RUNNING TESTS**
 
-In MATLAB, open the "tests" folder. Now you can use MATLAB's command window to run all tests, a single test suite or a single test case, as in the examples below.
+1. In MATLAB, open the "tests" folder.
+2. Use MATLAB's command window to run all tests, a single test suite or a single test case,
+   as in the examples below:
 
 *Running all tests:*
 

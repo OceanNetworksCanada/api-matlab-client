@@ -16,6 +16,7 @@ classdef OncArchive < onc.Service
             % Returns: ([struct]) File list obtained
             %
             % Documentation: https://wiki.oceannetworks.ca/display/CLmatlab/Archive+file+download+methods
+            
             [allPages] = util.param(varargin, 'allPages', false);
             fileList = this.getList(filters, 'location', allPages);
         end
@@ -33,6 +34,7 @@ classdef OncArchive < onc.Service
             % Returns: ([struct]) File list obtained
             %
             % Documentation: https://wiki.oceannetworks.ca/display/CLmatlab/Archive+file+download+methods
+            
             [allPages] = util.param(varargin, 'allPages', false);
             r = this.getList(filters, 'device', allPages);
         end
@@ -49,6 +51,7 @@ classdef OncArchive < onc.Service
             % Returns: (struct) Information on the download result
             %
             % Documentation: https://wiki.oceannetworks.ca/display/CLmatlab/Archive+file+download+methods
+            
             [overwrite, showMsg] = util.param(varargin, 'overwrite', false, 'showMsg', true);
             
             url = this.serviceUrl('archivefiles');
@@ -56,7 +59,7 @@ classdef OncArchive < onc.Service
             
             if showMsg, fprintf('Downloading file "%s"...\n', filename); end
             
-            [response, duration, info] = ...
+            [response, info] = ...
                 util.do_request(url, filters, 'timeout', this.timeout, 'showInfo', this.showInfo, ...
                                 'rawResponse', true, 'showProgress', true);
 
@@ -83,7 +86,7 @@ classdef OncArchive < onc.Service
                     'url'         , fullUrl,   ...
                     'status'      , txtStatus, ...
                     'size'        , info.size, ...
-                    'downloadTime', round(duration, 3), ...
+                    'downloadTime', round(info.duration, 3), ...
                     'file'        , filename);
 
                 return;

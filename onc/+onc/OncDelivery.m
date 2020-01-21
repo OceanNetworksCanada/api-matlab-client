@@ -9,7 +9,7 @@ classdef OncDelivery < onc.Service
     end
 
     methods (Access = public)
-        function r = orderDataProduct(this, filters, varargin)
+        function [r, status] = orderDataProduct(this, filters, varargin)
             %% Request, run and download a data product as described by the filters
             %
             % orderDataProduct(filters, maxRetries, downloadResultsOnly, includeMetadataFile)
@@ -26,22 +26,22 @@ classdef OncDelivery < onc.Service
             % Returns: [struct] A list of results (one named list for each file) with
             %                   information on the operation outcome
             %
-            % Documentation: https://wiki.oceannetworks.ca/display/CLmatlab/Data+product+download+methods
+            % Documentation: https://wiki.oceannetworks.ca/display/CLIBS/Data+product+download+methods
             [maxRetries, downloadResultsOnly, metadata, overwrite] = util.param(varargin, ...
                 'maxRetries', 0, 'downloadResultsOnly', false, 'includeMetadataFile', true, 'overwrite', false);
 
             fileList = [];
 
             % Request the product
-            requestData = this.requestDataProduct(filters);
-            if util.is_failed_response(requestData)
-                r = requestData;
+            [rqData, status] = this.requestDataProduct(filters);
+            if util.is_failed_response(rqData, status)
+                r = rqData;
                 return
             end
 
             % Run the product request
-            runData = this.runDataProduct(requestData.dpRequestId);
-            if util.is_failed_response(runData)
+            [runData, status] = this.runDataProduct(rqData.dpRequestId);
+            if util.is_failed_response(runData, status)
                 r = runData;
                 return;
             end
@@ -65,7 +65,7 @@ classdef OncDelivery < onc.Service
             r = this.formatResult(fileList, runData);
         end
 
-        function r = requestDataProduct(this, filters)
+        function [r, status] = requestDataProduct(this, filters)
             %% Request a data product generation described by the filters
             %
             % requestDataProduct(filters)
@@ -81,62 +81,67 @@ classdef OncDelivery < onc.Service
 
             url = sprintf('%sapi/dataProductDelivery', this.baseUrl);
             fprintf('Requesting data product...\n');
-            r = this.doRequest(url, filters);
-            if not(util.is_failed_response(r))
+            [r, info] = this.doRequest(url, filters);
+            status = info.status;
+            if not(util.is_failed_response(r, status))
                 this.estimatePollPeriod(r);
                 this.printProductRequest(r);
+            else
+                throw(util.prepare_exception(status));
             end
         end
 
-        function runResult = runDataProduct(this, varargin)
+        function [r, status] = runDataProduct(this, dpRequestId, waitComplete)
             %% Run a data product generation request
             %
             %
             % runDataProduct (dpRequestId)
             %
             % * dpRequestId (int) Request id obtained by requestDataProduct()
+            % - waitComplete @TODO
             %
             % Returns: (struct) information of the run process
             %
-            % Documentation: https://wiki.oceannetworks.ca/display/CLmatlab/Data+product+download+methods
-            [dpRequestId, waitComplete] = util.param(varargin, 'dpRequestId', 0, 'waitComplete', false);
+            % Documentation: https://wiki.oceannetworks.ca/display/CLIBS/Data+product+download+methods
+            
+            if ~exist('waitComplete','var'), waitComplete = false; end
             url = sprintf('%sapi/dataProductDelivery', this.baseUrl);
             log = onc.DPLogger();
 
-            runResult = struct('runIds', [], 'fileCount', 0, 'runTime', 0, 'requestCount', 0);
-            filters   = struct('method', 'run', 'token', this.token, 'dpRequestId', dpRequestId);
+            r = struct('runIds', [], 'fileCount', 0, 'runTime', 0, 'requestCount', 0);
+            filters = struct('method', 'run', 'token', this.token, 'dpRequestId', dpRequestId);
 
             % run timed run request
             tic
             status = 202;
             while status == 202
-                [response, ~, info] = this.doRequest(url, filters);
-                runResult.requestCount = runResult.requestCount + 1;
+                [response, info] = this.doRequest(url, filters);
                 status = info.status;
+                r.requestCount = r.requestCount + 1;
                 
-                % Repeat only if waitComplete
+                % guard against failed request
+                if util.is_failed_response(response, status)
+                    r = response;
+                    throw(util.prepare_exception(status));
+                end
+                
+                % repeat only if waitComplete
                 if waitComplete
                     log.printResponse(response);
-                    if info.status == 202, pause(this.pollPeriod); end
-                else
-                    status = 200;
+                    if status == 202, pause(this.pollPeriod); end
                 end
             end
             duration = toc;
             fprintf('\n')
 
-            if util.is_failed_response(response)
-                runResult = response;
-                return;
-            end
-
-            runResult.fileCount = response(1).fileCount;
-            runResult.runTime   = round(duration, 3);
+            % prepare response
+            r.fileCount = response(1).fileCount;
+            r.runTime   = round(duration, 3);
 
             % gather a list of runIds
             for i = 1 : numel(response)
                 run = response(i);
-                runResult.runIds = [runResult.runIds, run.dpRunId];
+                r.runIds = [r.runIds, run.dpRunId];
             end
         end
 
@@ -158,7 +163,7 @@ classdef OncDelivery < onc.Service
             % Returns: [struct] A list of results (one struct for each downloaded file) with
             %          information on the operation outcome
             %
-            % Documentation: https://wiki.oceannetworks.ca/display/CLmatlab/Data+product+download+methods
+            % Documentation: https://wiki.oceannetworks.ca/display/CLIBS/Data+product+download+methods
             [maxRetries, downloadResultsOnly, metadata, overwrite] = util.param(varargin, ...
                 'maxRetries', 0, 'downloadResultsOnly', false, 'includeMetadataFile', true, 'overwrite', false);
 
@@ -199,7 +204,6 @@ classdef OncDelivery < onc.Service
             % loop thorugh file indexes
             doLoop = true;
             while doLoop
-                % stop after too many retries
                 status = dpf.download(timeout, this.pollPeriod, outPath, maxRetries, overwrite);
 
                 if status == 200 || status == 777
@@ -222,7 +226,7 @@ classdef OncDelivery < onc.Service
                 end
                 fileList = [fileList, dpf.getInfo()];
             end
-            fprintf('\nDownload finished.\n');
+            fprintf('\nDownload process finished.\n');
         end
 
 
@@ -236,28 +240,30 @@ classdef OncDelivery < onc.Service
             %
             % Returns: ([struct]) List of results for each file
             [fileCount, getMetadata] = util.param(varargin, 'fileCount', 0, 'getMetadata', false);
-            fprintf('\nObtaining download information for data product files with runId %d...\n', dpRunId)
-
+            
             % If we don't know the fileCount, get it from the server (takes longer)
             if fileCount <= 0
+                fprintf('\nObtaining download information for data product files with runId %d...\n', dpRunId)
                 fileCount = this.countFilesInProduct(dpRunId);
             end
+            fprintf('   %d files available for download', fileCount);
 
             % Build a file list of data product file information
-            fileList = [];
-            indexes  = [];
-            for i = 1 : fileCount
-                indexes = [indexes, string(i)];
+            % populate backwards to pre-allocate memory in matlab
+            for i = fileCount : -1 : 1
+                indexes(i) = string(i);
             end
             if getMetadata
                 indexes = [indexes, "meta"];
             end
-
-            for i = 1 : numel(indexes)
+            
+            % populate backwards to pre-allocate memory
+            n = numel(indexes);
+            for i = n : -1 : 1
                 index = indexes(i);
                 dpf = onc.DataProductFile(dpRunId, index, this.baseUrl, this.token, this.showInfo);
                 dpf.setComplete();
-                fileList = [fileList, dpf.getInfo()];
+                fileList(i) = dpf.getInfo();
             end
         end
 
@@ -275,7 +281,8 @@ classdef OncDelivery < onc.Service
 
             index = 1;
             while ((status == 200) || (status == 202))
-                status = this.testUrl(sprintf('%s&index=%d', base, index));
+                fileUrl = sprintf('%s&index=%d', base, index);
+                status = util.test_url(fileUrl, this.showInfo, this.timeout);
                 
                 if status == 200
                     % count successful HEAD request
@@ -286,8 +293,6 @@ classdef OncDelivery < onc.Service
                     pause(this.pollPeriod);
                 end
             end
-
-            fprintf('   %d files available for download', n);
         end
 
         function this = estimatePollPeriod(this, response)

@@ -1,4 +1,5 @@
 function runAllTests()
+    import matlab.unittest.TestSuite;
     run('globals.m');    
     
     %  Runs all tests suites and displays results    

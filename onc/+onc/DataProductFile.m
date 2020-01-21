@@ -127,11 +127,10 @@ classdef DataProductFile < handle
                 elseif s == 404
                     % Index too high, no more files to download
                 else
-                    % Gone
-                    txt = ['ERROR: File not found. If this request is recent, try downloading', ... 
-                           ' this product using the method downloadProduct with runId: %d'];
-                    log.printLine(sprintf(txt, this.filters.runId));
-                    util.print_error(response);
+                    % File is gone
+                    log.printLine(sprintf('ERROR: File with runId %d and index "%s" not found\n', ...
+                                  this.filters.dpRunId, this.filters.index));
+                    util.print_error(response, fullUrl);
                 end
             end
 
@@ -162,12 +161,13 @@ classdef DataProductFile < handle
             
             filename = this.fileName;
             if isempty(this.fileName)
-                filename = '(none)';
+                filename = '';
             end
 
             info = struct( ...
                 'url'             , this.downloadUrl,         ...
                 'status'          , txtStatus,                ...
+                'statusCode'      , this.status,              ...
                 'size'            , this.fileSize,            ...
                 'file'            , char(filename),           ...
                 'index'           , char(this.filters.index), ...

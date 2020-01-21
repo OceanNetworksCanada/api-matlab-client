@@ -1,5 +1,6 @@
 function runTestCase(suiteName, caseName)
-    run('globals.m');
+    import matlab.unittest.TestSuite;
+    run('globals.m');    
 
     % Run a single test case
     obj = eval(suiteName);

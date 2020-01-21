@@ -183,9 +183,7 @@ classdef Test07_DataProductDelivery < matlab.unittest.TestCase
         function test07_wrong_order_request_argument(this)
             onc = this.prepareOnc('output/07/07');
             this.cleanDirectory(onc.outPath);
-            result = onc.orderDataProduct(this.F_FAKE, 100, true, false);
-            verifyGreaterThanOrEqual(this, length(result.errors), 1);
-            verify_error_response(this, result);
+            verifyError(this, @() onc.orderDataProduct(this.F_FAKE, 100, true, false), 'onc:http400');
         end
 
         function test08_manual_request_run_and_download(this)
@@ -216,8 +214,7 @@ classdef Test07_DataProductDelivery < matlab.unittest.TestCase
         function test10_manual_run_with_wrong_argument(this)
             onc = this.prepareOnc('output/07/10');
             this.cleanDirectory(onc.outPath);
-            result = onc.runDataProduct(1234568790);
-            verify_error_response(this, result);
+            verifyError(this, @() onc.runDataProduct(1234568790), 'onc:http400');
         end
 
         function test11_manual_download_with_wrong_argument(this)

@@ -1,7 +1,11 @@
 function runTestSuite(suite)
-    run('globals.m');	
+    import matlab.unittest.TestSuite;
+    run('globals.m');
     
     % Run a single test suite
+    testResults = [];
+    suite = str2num(suite);
+    
 	switch suite
 		case 1
 			testResults = run(Test01_Locations);
@@ -21,6 +25,9 @@ function runTestSuite(suite)
 			testResults = run(Test08_RealTime);
         case 9
 			testResults = run(Test09_ArchiveFiles);
+        otherwise
+            throw(MException('onc:BadSuiteNumber', sprintf('Wrong suite number: %d', suite)));
+            
 	end
 
     rt = table(testResults);

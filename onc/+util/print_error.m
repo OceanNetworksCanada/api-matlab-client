@@ -1,5 +1,8 @@
 function print_error(response, url)
-    status = response.StatusCode;
+    % try to find status in response
+    
+    status = double(response.StatusCode);
+    
     if status == 400
         fprintf('\nERROR 400 - Bad Request:\n  %s\n\n', url)
         payload = response.Body.Data;
@@ -16,6 +19,7 @@ function print_error(response, url)
                 parameters = e.parameter;
                 fprintf('  Parameter "%s" -> %s\n', string(parameters), msg)
             end
+            fprintf('\n');
 
         elseif status == 401
             fprintf('\nERROR 401: Unauthorized - %s\n', url)
