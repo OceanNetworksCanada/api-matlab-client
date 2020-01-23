@@ -15,14 +15,13 @@ Although each test suite inherits from matlab.unittest.TestCase, each is written
 **TESTING REQUIREMENTS**
 
 1. MATLAB unit testing framework (usually included)
-2. Verify that the default values in "globals.m" (i.e. API token) is complete and correct
-
+2. Create a text file named "TOKEN" (no extension) that contains your token. This file will NOT be uploaded to GitHub (due to a .gitignore entry) and exists to avoid publishing your token by mistake.
 
 **RUNNING TESTS**
 
-1. In MATLAB, open the "tests" folder.
-2. Use MATLAB's command window to run all tests, a single test suite or a single test case,
-   as in the examples below:
+1. IF YOU MADE CODE CHANGES: Uninstall the Onc MATLAB toolkit
+1. In MATLAB, open (i.e. Right click -> "Open") the "tests" folder
+2. Use MATLAB's command window to run all tests, using the commands described below:
 
 *Running all tests:*
 
@@ -30,15 +29,15 @@ Although each test suite inherits from matlab.unittest.TestCase, each is written
 
 *Running a test suite:*
 
-    runTestSuite <NAME_OF_TEST_SUITE_CLASS>
+    runTestSuite <NUMBER_OF_TEST_SUITE>
     i.e.:
-    runTestSuite TestLocations
+    runTestSuite 1
 
 *Running a test case:*
 
     runTestCase <NAME_OF_TEST_SUITE_CLASS> <NAME_OF_CASE_METHOD>
     i.e.:
-    runTestCase TestLocations testFilterPropertyCode
+    runTestCase Test01_Locations testGetAllLocations
 
 
 **DEVELOPING TESTS**

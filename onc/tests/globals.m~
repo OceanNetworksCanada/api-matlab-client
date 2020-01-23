@@ -22,4 +22,4 @@ config.timeout = 60;
 f = fopen('TOKEN','r');
 line = fgetl(f);
 fclose(f);
-config.token = strtrim(line);
+config.token = 'YOUR_TOKEN';
