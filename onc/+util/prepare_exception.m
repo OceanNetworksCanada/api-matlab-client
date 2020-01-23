@@ -17,7 +17,7 @@ function ex = prepare_exception(status)
         case 500
             ex = MException('onc:http500', 'HTTP 500: Server error');
         case 503
-            ex = MException('onc:http503', 'HTTP 500: Service unavailable or under maintenance');
+            ex = MException('onc:http503', 'HTTP 503: Service unavailable or under maintenance');
         otherwise
             ex = MException(sprintf('onc:http%d', status), sprintf('HTTP %d: Request error', status));
     end

@@ -15,7 +15,7 @@ Although each test suite inherits from matlab.unittest.TestCase, each is written
 **TESTING REQUIREMENTS**
 
 1. MATLAB unit testing framework (usually included)
-2. Create a text file named "TOKEN" (no extension) that contains your token. This file will NOT be uploaded to GitHub (due to a .gitignore entry) and exists to avoid publishing your token by mistake.
+2. Create a text file named "TOKEN" (no extension) that contains your token. This file will NOT be uploaded to GitHub (due to a .gitignore entry) nor packed into the toolbox (file exclusion) and exists to avoid publishing your token by mistake. If in doubt, clear its contents before publishing changes.
 
 **RUNNING TESTS**
 

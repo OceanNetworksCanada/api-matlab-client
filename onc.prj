@@ -1,15 +1,21 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="2909156926" file="/home/dany/API_Samples/api-matlab-client/onc.prj" location="/home/dany/API_Samples/api-matlab-client" name="onc" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="3806698017" file="/home/dany/API_Samples/api-matlab-client/onc.prj" location="/home/dany/API_Samples/api-matlab-client" name="onc" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>Ocean Networks Canada API Client</param.appname>
     <param.authnamewatermark>Ocean Networks Canada</param.authnamewatermark>
     <param.email>data@oceannetworks.ca</param.email>
     <param.company>Ocean Networks Canada</param.company>
     <param.summary>Open access to oceanographic data hosted by Ocean Networks Canada through the Oceans 2.0 API web services</param.summary>
-    <param.description>This toolkit provides functionality that allows users to discover and retrieve Ocean Networks Canada's oceanographic data (in raw, text, image, audio, video or any other format available).
+    <param.description>Allows users to discover and retrieve Ocean Networks Canada's 12+ years of oceanographic data in raw, text, image, audio, video or any other format available.
 
-The Onc class provided wraps web service calls, complex workflows, and business logic so that users can download data with a single line of code.</param.description>
+This toolkit provides a class that wraps web service calls, complex workflows, and business logic so that users can download data with a single line of code.
+
+Full Documentation: https://wiki.oceannetworks.ca/display/CLIBS/API+Client+Libraries
+Github repository: https://github.com/OceanNetworksCanada/api-matlab-client
+
+Current Maintainer: Dany Cabrera
+Past contributors: Allan Rempel, Ryan Ross</param.description>
     <param.screenshot>${PROJECT_ROOT}/logo.png</param.screenshot>
-    <param.version>2.1.0</param.version>
+    <param.version>2.1.1</param.version>
     <param.output>${PROJECT_ROOT}/Ocean Networks Canada API Client.mltbx</param.output>
     <param.products.name />
     <param.products.id />
@@ -37,7 +43,9 @@ The Onc class provided wraps web service calls, complex workflows, and business 
 %
 tests
 test*.m
-output</param.exclude.filters>
+output
+dist
+tests/TOKEN</param.exclude.filters>
     <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
     <param.examples />
     <param.demosxml />
