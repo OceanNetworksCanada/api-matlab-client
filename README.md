@@ -14,5 +14,5 @@ For complete documentation and examples, visit https://wiki.oceannetworks.ca/dis
 
 ## Maintainers
 
-* Current maintainer: [Dany Cabrera](dcabrera@oceannetworks.ca)
-* Previous maintainers: [Allan Rempel](agrempel@uvic.ca), [Ryan Ross](ryanross@uvic.ca)
+* Current maintainer: [Zealem Zelalem Engida](ze@uvic.ca), [Angela Schlesinger](schlesin@uvic.ca)
+* Previous maintainers: [Allan Rempel](agrempel@uvic.ca), [Ryan Ross](ryanross@uvic.ca); [Dany Cabrera](dcabrera@oceannetworks.ca)
