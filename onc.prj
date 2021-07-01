@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="3806698017" file="/home/dany/API_Samples/api-matlab-client/onc.prj" location="/home/dany/API_Samples/api-matlab-client" name="onc" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="1855703013" file="/home/zelalem/my_repos/mygithubrepos/api-matlab-client/onc.prj" location="/home/zelalem/my_repos/mygithubrepos/api-matlab-client" name="onc" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>Ocean Networks Canada API Client</param.appname>
     <param.authnamewatermark>Ocean Networks Canada</param.authnamewatermark>
     <param.email>data@oceannetworks.ca</param.email>
@@ -15,7 +15,7 @@ Github repository: https://github.com/OceanNetworksCanada/api-matlab-client
 Current Maintainer: Dany Cabrera
 Past contributors: Allan Rempel, Ryan Ross</param.description>
     <param.screenshot>${PROJECT_ROOT}/logo.png</param.screenshot>
-    <param.version>2.1.1</param.version>
+    <param.version>2.1.2</param.version>
     <param.output>${PROJECT_ROOT}/Ocean Networks Canada API Client.mltbx</param.output>
     <param.products.name />
     <param.products.id />
@@ -120,14 +120,32 @@ tests/TOKEN</param.exclude.filters>
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="${PROJECT_ROOT}" name="Ocean Networks Canada API Client.mltbx" optional="false">/home/dany/API_Samples/api-matlab-client/Ocean Networks Canada API Client.mltbx</file>
+      <file location="${PROJECT_ROOT}" name="Ocean Networks Canada API Client.mltbx" optional="false">/home/zelalem/my_repos/mygithubrepos/api-matlab-client/Ocean Networks Canada API Client.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>/home/dany/Software/MATLAB</root>
+      <root>/usr/local/MATLAB/R2020a</root>
       <toolboxes>
+        <toolbox name="matlabcoder" />
+        <toolbox name="embeddedcoder" />
+        <toolbox name="fixedpoint" />
         <toolbox name="neuralnetwork" />
       </toolboxes>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+      <toolbox>
+        <embeddedcoder>
+          <enabled>true</enabled>
+        </embeddedcoder>
+      </toolbox>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
+      </toolbox>
       <toolbox>
         <neuralnetwork>
           <enabled>true</enabled>
@@ -143,7 +161,7 @@ tests/TOKEN</param.exclude.filters>
       <vista>false</vista>
       <linux>true</linux>
       <solaris>false</solaris>
-      <osver>4.15.0-74-generic</osver>
+      <osver>5.4.0-74-generic</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>glnxa64</arch>
