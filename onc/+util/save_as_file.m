@@ -23,10 +23,12 @@ end
 % Save file in outPath if it doesn't exist yet
 if overwrite || not(isfile(fullPath))
     try
-        if strcmp('2021a',version('-release'))
-            f = fopen(fullPath, 'w','ISO-8859-1');
+        matlabVersion = version('-release');
+        year = str2double(matlabVersion(1:end-1));
+        if year >= 2021
+            f = fopen(fullPath, 'w','n','ISO-8859-1');
         else
-            f = fopen(fullPath, 'w');
+            f = fopen(fullPath, 'w','n');
         end
         
         if f ~= -1
