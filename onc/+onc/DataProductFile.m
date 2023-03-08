@@ -100,7 +100,9 @@ classdef DataProductFile < handle
                     else
                         this.fileSize = strlength(response.Body.Data);
                     end
-                    saveResult = util.save_as_file(response, outPath, filename, overwrite);
+                    %save_as_file doesn't work properly! Use urlwrite instead
+                    [~, saveResult] = urlwrite(uri.EncodedURI,fullfile(outPath, filename));
+                    %saveResult = util.save_as_file(response, outPath, filename, overwrite);
                     this.downloadingTime = round(duration, 3);
 
                     % log status
