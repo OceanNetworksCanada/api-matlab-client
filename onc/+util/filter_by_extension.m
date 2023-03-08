@@ -15,12 +15,19 @@ function results = filter_by_extension(results, extension)
 
     % determine the row structure
     isStructRow = false;
-    if ~isempty(results.files)
-        if isa(results.files(1), 'struct')
-            isStructRow = true;
+    
+    if isfield(results,'files')
+        if ~isempty(results.files)
+            if isa(results.files(1), 'struct')
+                isStructRow = true;
+            end
         end
+        
+    else
+        error('%s: %s (error ID %d)',results.errors.errorMessage, results.errors.parameter, results.errors.errorCode);
     end
-
+    
+    
     % preallocate an array of flags
     flags = zeros([n, 1], 'logical');
 
