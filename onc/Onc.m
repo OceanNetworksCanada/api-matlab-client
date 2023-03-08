@@ -8,6 +8,7 @@ classdef Onc < onc.OncDiscovery & onc.OncDelivery & onc.OncRealTime & onc.OncArc
     % showInfo - Print verbose comments for debugging
     % outPath  - Output path for downloaded files
     % timeout  - Number of seconds before a request to the API is canceled
+    % tree     - ONC data search tree
     %
     % ONC Methods:
     % 
@@ -53,6 +54,7 @@ classdef Onc < onc.OncDiscovery & onc.OncDelivery & onc.OncRealTime & onc.OncArc
         showInfo = false    % Print verbose comments for debugging
         outPath  = 'output' % Output path for downloaded files
         timeout  = 60       % Number of seconds before a request to the API is canceled
+        tree     = []       % ONC Data Search Tree
     end
 
     properties (SetAccess = private)
@@ -102,6 +104,32 @@ classdef Onc < onc.OncDiscovery & onc.OncDelivery & onc.OncRealTime & onc.OncArc
             if not(this.production)
                 this.baseUrl = 'https://qa.oceannetworks.ca/';
             end
+            
+            %If a search tree file exists, load it.  If not, generate and save one
+            [source_path,~,~] = fileparts(which('Onc.m'));
+            tree_path = fullfile(source_path,'onc_tree.mat');
+            if ~exist(tree_path,'file')
+                fprintf('\n Loading ONC search tree.  Accessible with onc.tree \n');
+                tree = util.extract_tree(this);
+                save(tree_path, 'tree')
+            elseif exist(tree_path,'file')
+                %Check if it's more than a week old. If so, update it:
+                dir_files = dir(source_path);
+                filenames = {dir_files(:).name};
+                [~,idx] = ismember('onc_tree.mat',filenames);
+                treeFileDate = dir_files(idx).datenum;
+                if now - treeFileDate > 7
+                    fprintf('\n Updating ONC search tree.  Accessible with onc.tree \n');
+                    tree = util.extract_tree(this);
+                    save(tree_path, 'tree')
+                end
+            end
+            temp = load(tree_path);
+            this.tree = temp.tree;
+            %These codes can then be used for input to onc.getDevices by
+            %providing the locationCodes
+            
+            
         end
 
         function print(~, data)
@@ -130,6 +158,7 @@ classdef Onc < onc.OncDiscovery & onc.OncDelivery & onc.OncRealTime & onc.OncArc
             dt.Format = 'yyyy-MM-dd''T''HH:mm:ss.SSS''Z''';
             text = sprintf('%s', char(dt));
         end
+        
     end
     
     methods (Access = private)
