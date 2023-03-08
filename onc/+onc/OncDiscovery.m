@@ -110,7 +110,19 @@ classdef OncDiscovery < onc.Service
             % - method:  ([char])  Method to request, one of {'get', 'getTree'}
             %
             % Returns: ([struct]) List of elements found
-            [method] = util.param(varargin, 'method', 'get');
+            
+            %BUG: if varargin = {'method','getTree'}, not actually using getTree...
+            %[method] = util.param(varargin, 'method', 'get'); 
+            if nargin>3
+                if strcmpi(varargin{1},'method') & strcmpi(varargin{2},'getTree')
+                    [method] = util.param(varargin, 'method', 'getTree'); 
+                else 
+                    [method] = util.param(varargin, 'method', 'get'); 
+                end
+            else
+                [method] = util.param(varargin, 'method', 'get'); 
+            end
+            
             url = this.serviceUrl(service);
 
             filters = util.sanitize_filters(filters);
