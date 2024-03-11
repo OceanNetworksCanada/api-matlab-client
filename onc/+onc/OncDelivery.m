@@ -104,7 +104,7 @@ classdef OncDelivery < onc.Service
             %
             % Documentation: https://wiki.oceannetworks.ca/display/CLIBS/Data+product+download+methods
             
-            if ~exist('waitComplete','var'), waitComplete = false; end
+            if ~exist('waitComplete','var'), waitComplete = true; end
             url = sprintf('%sapi/dataProductDelivery', this.baseUrl);
             log = onc.DPLogger();
 
