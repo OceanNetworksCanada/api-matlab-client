@@ -113,23 +113,26 @@ classdef OncDelivery < onc.Service
 
             % run timed run request
             tic
-            status = 202;
-            while status == 202
+            flag = 'queued';
+            while ~strcmp(flag,'complete') && ~strcmp(flag,'cancelled')
                 [response, info] = this.doRequest(url, filters);
                 status = info.status;
                 r.requestCount = r.requestCount + 1;
                 
                 % guard against failed request
                 if util.is_failed_response(response, status)
-                    r = response;
                     throw(util.prepare_exception(status));
                 end
-                
                 % repeat only if waitComplete
                 if waitComplete
                     log.printResponse(response);
-                    if status == 202, pause(this.pollPeriod); end
+                    if status == 202
+                       pause(this.pollPeriod); 
+                    end
+                else
+                    break;
                 end
+                flag = response.status;
             end
             duration = toc;
             fprintf('\n')
