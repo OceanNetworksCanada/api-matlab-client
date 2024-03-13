@@ -25,7 +25,9 @@ function [result, info] = do_request(url, filters, varargin)
     % run and time request
     if showInfo, fprintf('\nRequesting URL:\n   %s\n', fullUrl); end
     tic
-    response = send(request, uri, options);
+    %response = send(request, uri, options);
+    response = request.send(uri,options);
+    
     duration = toc;
     
     % print duration
@@ -47,22 +49,13 @@ function [result, info] = do_request(url, filters, varargin)
         case 202
             % Accepted, no need to print error, handle manually
             result = response.Body.Data;
-        case 400
-            % Bad request
-            result = response.Body.Data;
-            util.print_error(response, fullUrl);
-        case 401
-            % Unauthorized
-            fprintf('\nERROR 401: Unauthorized. Please verify your user token.\n')
-            result = response.Body.Data;
-        case 503
-            % Down for maintenance
-            fprintf('\nERROR 503: Service unavailable.\nWe could be down for maintenance; ');
-            fprintf('visit https://data.oceannetworks.ca for more information.\n')
-            result = struct('errors', [struct('errorCode', 503, 'message', 'Service Unavailable')]);
         otherwise
-            result = response.Body.Data;
-            fprintf('\nERROR: The request failed with HTTP error %d\n', status)
+            util.print_error(response, fullUrl);
+            if status == 400 || status == 401
+                throw(util.prepare_exception(status,double(response.Body.Data.errors.errorCode)));
+            else
+                throw(util.prepare_exception(status));
+            end
     end
 
     % prepare info.size only if the response is a file, otherwise 0
