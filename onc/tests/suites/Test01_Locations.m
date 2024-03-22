@@ -1,82 +1,93 @@
 % OncTest Locations test suite
-%   Contains test cases for the locations discovery service.
+%   Contains test cases for the locations / locationtrees discovery service.
 
-classdef Test01_Locations < TestDiscovery
-    
-    %% Public Methods
-    methods
-        
-        function obj = Test01_Locations()
-            % Constructor
-            obj@TestDiscovery();
-            obj.expectedFields('getLocations') = ["deployments", "locationName", "depth", "bbox", "description", "hasDeviceData", "lon", "locationCode", "hasPropertyData", "lat", "dataSearchURL"];
-        end
+classdef Test01_Locations < matlab.unittest.TestCase
+    properties
+        onc
     end
     
+    methods (TestClassSetup)
+        function classSetup(this)
+            config = globals();
+            this.onc = Onc(config.token, config.production, config.showInfo, config.outPath, config.timeout);
+        end
+    end
+
     %% Test methods
     methods (Test)
-        %% General test cases
-        
-        function testGetAllLocations(this)
-            % Make an unfiltered locations request
-            % verifies: expected fields, minimum rows
-            locations = this.o.getLocations();
-            verify_fields(this, locations, this.expectedFields('getLocations'));
-            this.verify_min_length(locations, 500);
+        %% getLocations test cases
+        function testInvalidTimeRangeGreaterStartTime(this)
+            filters = {'locationCode', 'FGPD','dateFrom', '2020-01-01', 'dateTo', '2019-01-01'};
+            verifyError(this, @() this.onc.getLocations(filters), 'onc:http400:error23');
+        end
+
+        function testInvalidTimeRangeFutureStartTime(this)
+            filters = {'locationCode', 'FGPD', 'dateFrom', '2050-01-01'};
+            verifyError(this, @() this.onc.getLocations(filters), 'onc:http400:error25');
         end
         
-        function testISODateRange(this)
-            % Test a date range with format ISO8601
-            filters = {'dateFrom', '2014-02-24T00:00:01.000Z', 'dateTo', '2014-03-24T00:00:01.000Z'};
-            locations = this.testSingleFilter('getLocations', filters, 100, NaN);
+        function testInvalidParamValue(this)
+            filters = {'locationCode', 'XYZ123'};
+            verifyError(this, @() this.onc.getLocations(filters), 'onc:http400:error127');
         end
         
-        function testFilterIncludeChildren(this)
-            % Test filter includeChildren, verify children were obtained
-            filters = {'includeChildren', 'true', 'locationCode', 'SAAN'};
-            locations = this.testSingleFilter('getLocations', filters, 30, NaN);
+        function testInvalidParamName(this)
+            filters = {'fakeParamName', 'FGPD'};
+            verifyError(this, @() this.onc.getLocations(filters), 'onc:http400:error129');
         end
         
-        function testWrongLocationCode(this)
-            % try an invalid locationCode, verify error structure
-            locations = this.o.getLocations({'locationCode', 'CQS34543BG'});
-            verify_error_response(this, locations);
+        function testNoData(this)
+            filters = {'locationCode', 'FGPD', 'dateTo', '1900-01-01'};
+            verifyError(this, @() this.onc.getLocations(filters), 'onc:http404');
         end
         
-        function testNoLocationsFound(this)
-            % try a locations query with 0 results, verify result is an empty 0x0 matrix
-            locations = this.o.getLocations({'locationCode', 'SAAN', 'dateTo', '1995-03-24T00:00:01.000Z'});
-            verifyEqual(this, size(locations), [0 0]);
-            
-        end
-        %% Single filter test cases
-        % These tests invoke getLocations with a single filter, for every supported filter
-        % Verifications according to tests documentation at: https://internal.oceannetworks.ca/x/xYI2Ag
-        
-        function testFilterLocationCode(this)
-            locations = this.testSingleFilter('getLocations', {'locationCode', 'CQSBG'}, 1, 1);
-            verifyEqual(this, locations(1).locationName, 'Bubbly Gulch');
+        function testValidParams(this)
+            filters = {'locationCode', 'FGPD', 'dateFrom', '2005-09-17', 'dateTo', '2020-09-17'};
+            locations = this.onc.getLocations(filters);
+            verifyTrue(this, length(locations) >= 1);
+            expectedLocationsFields = ["deployments", "locationName", "depth", "bbox", ...
+                                    "description", "hasDeviceData", "lon", "locationCode",...
+                                    "hasPropertyData", "lat", "dataSearchURL"];
+            verify_fields(this, locations(1), expectedLocationsFields);
+            expectedBboxFields = ["maxDepth", "maxLat", "maxLon", "minDepth", "minLat", "minLon"];
+            verify_fields(this, locations(1).bbox, expectedBboxFields);
         end
         
-        function testFilterLocationName(this)
-            locations = this.testSingleFilter('getLocations', {'locationName', 'Bubbly Gulch'}, 1, 1);
-            verifyEqual(this, locations(1).locationCode, 'CQSBG');
+        %% Location tree test cases
+        
+        function testTreeInvalidTimeRangeGreaterStartTime(this)
+            filters = {'locationCode', 'ARCT', 'dateFrom', '2020-01-01', 'dateTo', '2019-01-01'};
+            verifyError(this, @() this.onc.getLocationHierarchy(filters), 'onc:http400:error23');
+        end
+
+        function testTreeInvalidTimeRangeFutureStartTime(this)
+            filters = {'locationCode', 'ARCT', 'dateFrom', '2050-01-01'};
+            verifyError(this, @() this.onc.getLocationHierarchy(filters), 'onc:http400:error25');
+        end
+
+        function testTreeInvalidParamValue(this)
+            filters = {'locationCode', 'XYZ123'};
+            verifyError(this, @() this.onc.getLocationHierarchy(filters), 'onc:http400:error127');
+        end
+
+        function testTreeInvalidParamName(this)
+            filters = {'fakeParamName', 'ARCT'};
+            verifyError(this, @() this.onc.getLocationHierarchy(filters), 'onc:http400:error129');
         end
         
-        function testFilterDeviceCategoryCode(this)
-            locations = this.testSingleFilter('getLocations', {'deviceCategoryCode', 'CTD'}, 50, NaN);
+        function testTreeNoData(this)
+            filters = {'locationCode', 'ARCT', 'dateTo', '1900-01-01'};
+            verifyError(this, @() this.onc.getLocationHierarchy(filters), 'onc:http404');
         end
-        
-        function testFilterDeviceCode(this)
-            locations = this.testSingleFilter('getLocations', {'deviceCode', 'NORTEKADCP9917'}, 1, NaN);
-        end
-        
-        function testFilterPropertyCode(this)
-            locations = this.testSingleFilter('getLocations', {'propertyCode', 'co2concentration'}, 1, NaN);
-        end
-        
-        function testFilterDataProductCode(this)
-            locations = this.testSingleFilter('getLocations', {'dataProductCode', 'MP4V'}, 20, NaN);
+
+        function testTreeValidParams(this)
+            filters = {'locationCode', 'ARCT', 'deviceCategoryCode', 'VIDEOCAM'};
+            locations = this.onc.getLocationHierarchy(filters);
+            verifyTrue(this, length(locations) >= 1);
+            expectedLocationsFields = ["locationName","children","description","hasDeviceData",...
+                                        "locationCode","hasPropertyData"];
+            verify_fields(this, locations(1), expectedLocationsFields);
+            verifyTrue(this, length(locations(1).children) >= 1);
         end
     end
 end

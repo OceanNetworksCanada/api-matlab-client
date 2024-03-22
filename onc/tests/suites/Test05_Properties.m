@@ -1,15 +1,15 @@
 % Properties test suite
 %   Contains test cases for the properties discovery service.
 
-classdef Test05_Properties < TestDiscovery
-
-    %% Public Methods
-    methods
-
-        function obj = Test05_Properties()
-            % Constructor
-            obj@TestDiscovery();
-            obj.expectedFields('getProperties') = ["description", "hasDeviceData", "hasPropertyData", "propertyCode", "propertyName", "uom"];
+classdef Test05_Properties < matlab.unittest.TestCase
+    properties
+        onc
+    end
+    
+    methods (TestClassSetup)
+        function classSetup(this)
+            config = globals();
+            this.onc = Onc(config.token, config.production, config.showInfo, config.outPath, config.timeout);
         end
     end
 
@@ -17,55 +17,35 @@ classdef Test05_Properties < TestDiscovery
     methods (Test)
         %% General test cases
 
-        function testGetAllProperties(this)
-            % Make an unfiltered properties request
+        function testInvalidParamValue(this)
+            % Make an unfiltered deviceCategories request
             % verifies: expected fields, minimum rows
-            properties = this.o.getProperties();
-            verify_fields(this, properties, this.expectedFields('getProperties'));
-            this.verify_min_length(properties, 150);
+            filters = {'propertyCode','XYZ123'};
+            verifyError(this, @() this.onc.getProperties(filters), 'onc:http400:error127');
         end
 
-        function testWrongPropertyCode(this)
-            % try an invalid propertyCode, verify error structure
-            properties = this.o.getProperties({'propertyCode', 'XYZ321'});
-            verify_error_response(this, properties);
+        function testInvalidParamName(this)
+            % try an invalid locationCode, verify error structure
+            filters = {'fakeParamName', 'conductivity'};
+            verifyError(this, @() this.onc.getProperties(filters), 'onc:http400:error129');
         end
 
-        function testNoPropertiesFound(this)
-            % try a properties query with 0 results, verify result is an empty 0x0 matrix
-            properties = this.o.getProperties({'locationCode', 'SAAN', 'deviceCategoryCode', 'POWER_SUPPLY'});
-            verifyEqual(this, size(properties), [0 0]);
-
-        end
-        %% Single filter test cases
-        % These tests invoke getProperties with a single filter, for every supported filter
-        % Verifications according to tests documentation at: https://internal.oceannetworks.ca/x/xYI2Ag
-
-        function testFilterPropertyCode(this)
-            properties = this.testSingleFilter('getProperties', {'propertyCode', 'absolutehumidity'}, 1, 1);
-            verifyEqual(this, properties(1).propertyCode, 'absolutehumidity');
+        function testNoData(this)
+            % try a deviceCategories query with 0 results, verify result message
+            filters = {'propertyCode', 'conductivity', 'locationCode', 'SAAN'};
+            verifyError(this, @() this.onc.getProperties(filters), 'onc:http404');
         end
 
-        function testFilterPropertyName(this)
-            properties = this.testSingleFilter('getProperties', {'propertyName', 'Bender Electrical Resistance'}, 1, 1);
-            verifyEqual(this, properties(1).propertyCode, 'benderelectricalresistance');
-        end
-
-        function testFilterDescription(this)
-            properties = this.testSingleFilter('getProperties', {'description', 'Kurtosis Statistical Analysis'}, 1, 1);
-            verifyEqual(this, properties(1).propertyCode, 'kurtosisstatisticalanalysis');
-        end
-
-        function testFilterLocationCode(this)
-            properties = this.testSingleFilter('getProperties', {'locationCode', 'ROVMP'}, 10, NaN);
-        end
-
-        function testFilterDeviceCategoryCode(this)
-            properties = this.testSingleFilter('getProperties', {'deviceCategoryCode', 'CTD'}, 10, NaN);
-        end
-
-        function testFilterDeviceCode(this)
-            properties = this.testSingleFilter('getProperties', {'deviceCode', 'ALECACTW-CAR0014'}, 3, NaN);
+        function testValidParams(this)
+            filters = {'propertyCode', 'conductivity', 'locationCode', 'BACAX', 'deviceCategoryCode', 'CTD'};
+            
+            properties = this.onc.getProperties(filters);
+            verifyTrue(this, length(properties) >= 1);
+            expectedPropertiesFields = ["cvTerm", "description", "hasDeviceData", ...
+                                        "hasPropertyData", "propertyCode", "propertyName", "uom"];
+            verify_fields(this, properties(1), expectedPropertiesFields);
+            expectedCvTermFields = ["uri", "vocabulary"];
+            verify_fields(this, properties(1).cvTerm.uom, expectedCvTermFields);
         end
     end
 end

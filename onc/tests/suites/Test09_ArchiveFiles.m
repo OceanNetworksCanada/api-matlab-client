@@ -1,139 +1,183 @@
 classdef Test09_ArchiveFiles < matlab.unittest.TestCase
     properties (SetAccess = private)
         onc
-        F_LOCATION1 = struct("locationCode", "RISS", "deviceCategoryCode", "VIDEOCAM", "dateFrom", "2016-12-01T00:00:00.000Z", "dateTo", "2016-12-01T01:00:00.000Z");
-        F_LOCATION3 = struct("locationCode", "RISS", "deviceCategoryCode", "VIDEOCAM", "dateFrom", "2016-12-01T00:00:00.000Z", "dateTo", "2016-12-01T01:00:00.000Z", "rowLimit", 5);
-        F_LOCATIONFULL = struct("locationCode", "RISS", "deviceCategoryCode", "VIDEOCAM", "dateFrom", "2016-12-01T00:00:00.000Z", "dateTo", "2016-12-01T01:00:00.000Z", "extension", "mp4");
-        F_LOC_RETURN1 = struct("locationCode", "RISS", "deviceCategoryCode", "VIDEOCAM", "dateFrom", "2016-12-01T00:00:00.000Z", "dateTo", "2016-12-01T01:00:00.000Z", "rowLimit", 5, "returnOptions", "archiveLocation");
-        F_LOC_RETURN2 = struct("locationCode", "RISS", "deviceCategoryCode", "VIDEOCAM", "dateFrom", "2016-12-01T00:00:00.000Z", "dateTo", "2016-12-03T00:00:00.000Z", "rowLimit", 50, "returnOptions", "all", "extension", "mp4");
-        F_DEVICE1 = struct("dateFrom", "2010-01-01T00:00:00.000Z", "dateTo", "2010-01-01T00:02:00.000Z");
-        F_DEVICE1EXT = struct("deviceCode", "NAXYS_HYD_007", "dateFrom", "2010-01-01T00:00:00.000Z", "dateTo", "2010-01-01T00:02:00.000Z", "extension", "mp3");
-        F_GETDIRECT_DEV = struct("dateFrom", "2010-01-01T00:00:00.000Z", "dateTo", "2010-01-01T00:00:30.000Z", "deviceCode", "NAXYS_HYD_007", "returnOptions", "all");
-        F_GETDIRECT_LOC = struct("dateFrom", "2016-12-01T00:00:00.000Z", "dateTo", "2016-12-01T01:00:00.000Z", "locationCode", "RISS", "deviceCategoryCode", "VIDEOCAM", "extension", "mp4");
-        F_FAKE = struct("locationCode", "AREA51");
+        outPath = 'output';
+        paramsLocation = struct( ...
+                                'locationCode', 'NCBC',...
+                                'deviceCategoryCode', 'BPR',...
+                                'dateFrom', '2019-11-23',...
+                                'dateTo', '2019-11-26',...
+                                'fileExtension', 'txt',...
+                                'rowLimit', 80000,...
+                                'page', 1);
+
+        paramsLocationMultiPages = struct( ...
+                                'locationCode', 'NCBC',...
+                                'deviceCategoryCode', 'BPR',...
+                                'dateFrom', '2019-11-23',...
+                                'dateTo', '2019-11-26',...
+                                'fileExtension', 'txt',...
+                                'rowLimit', 2,...
+                                'page', 1);
+        
+        paramsDevice = struct('deviceCode', 'BPR-Folger-59',...
+                            'dateFrom', '2019-11-23',...
+                            'dateTo', '2019-11-26',...
+                            'fileExtension', 'txt',...
+                            'rowLimit', 80000,...
+                            'page', 1);
+
+        paramsDeviceMultiPages = struct('deviceCode', 'BPR-Folger-59',...
+                                    'dateFrom', '2019-11-23',...
+                                    'dateTo', '2019-11-26',...
+                                    'fileExtension', 'txt',...
+                                    'rowLimit', 2,...
+                                    'page', 1);
     end
     
     methods (TestClassSetup)
-        function prepareSuite(testCase)
-            s = rmdir('tests/output/09', 's'); % delete directory contents
+        function classSetup(this)
+            config = globals();
+            this.onc = Onc(config.token, config.production, config.showInfo, this.outPath, config.timeout);
         end
+    
     end
     
     methods (TestClassTeardown)
-        function cleanSuite(testCase)
-            s = rmdir('tests/output/09', 's'); % delete directory contents
+        function cleanSuite(this)
+            if isfolder(this.outPath)
+                rmdir(this.outPath, 's');
+            end
         end
     end
     
-    %% Public Methods
-    methods
-        % Constructor
-        function this = Test09_ArchiveFiles()
-            % prepare generic onc object
-            global config;
-            this.onc = Onc(config.token, config.production, config.showInfo, 'output/09', config.timeout);
-        end
-        
-        function onc = prepareOnc(this, outPath)
-            global config;
-            if ~isempty(outPath)
-                delete(sprintf('%s/*', outPath));
-            end
-            onc = Onc(config.token, config.production, config.showInfo, outPath, config.timeout);
-        end
+    %% Protected helper method
+    methods (Access = protected)
+        function updateOncOutPath(this, outPath) 
+            this.onc = Onc(this.onc.token, this.onc.production, this.onc.showInfo, outPath, this.onc.timeout);
+        end        
     end
     
     %% Test methods
     methods (Test)
-        %% General test cases
+        %% Testing location
+        function testLocationInvalidParamValue(this)
+            filters = this.paramsLocation;
+            filters.locationCode = 'XYZ123';
+            verifyError(this, @() this.onc.getListByLocation(filters), 'onc:http400:error127');
+        end
+
+        function testLocationInvalidParamName(this)
+            filters = this.paramsLocation;
+            filters.fakeParamName = 'NCBC';
+            verifyError(this, @() this.onc.getListByLocation(filters), 'onc:http400:error129');
+        end
+
+        function testLocationNoData(this)
+            filters = this.paramsLocation;
+            filters.dateFrom = '2000-01-01';
+            filters.dateTo = '2000-01-02';
+            verifyError(this, @() this.onc.getListByLocation(filters), 'onc:http400:error127');
+        end
+
+        function testLocationValidParamsOnePage(this)
+            result = this.onc.getListByLocation(this.paramsLocation);
+            resultAllPages = this.onc.getListByLocation(this.paramsLocationMultiPages, 'allPages', true);
+            assertTrue(this, length(result.files) > this.paramsLocationMultiPages.rowLimit, ...
+                        'Test should return at least `rowLimit` rows.');
+            assertEmpty(this, result.next, 'Test should return only one page.');
+            assertEqual(this, resultAllPages.files, result.files, ...
+                        'Test should concatenate rows for all pages.');
+            assertEmpty(this, resultAllPages.next, 'Test should return only one page.');
+        end
+
+        function testLocationValidParamsMultiplePages(this)
+            result = this.onc.getListByLocation(this.paramsLocationMultiPages);
+            assertEqual(this, length(result.files), this.paramsLocationMultiPages.rowLimit, ...
+                        'Test should only return `rowLimit` rows.');
+            assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
+        end
+
+        %% Testing device
+
+        function testDeviceInvalidParamValue(this)
+            filters = this.paramsDevice;
+            filters.deviceCode = 'XYZ123';
+            verifyError(this, @() this.onc.getListByDevice(filters), 'onc:http400:error127');
+        end
+
+        function testDeviceInvalidParamsMissingRequired(this)
+            filters = rmfield(this.paramsDevice, 'deviceCode');
+            verifyError(this, @() this.onc.getListByDevice(filters), 'onc:http400:error128');
+        end
+
+        function testDeviceInvalidParamName(this)
+            filters = this.paramsDevice;
+            filters.fakeParamName = 'BPR-Folger-59';
+            verifyError(this, @() this.onc.getListByDevice(filters), 'onc:http400:error129');
+        end
+
+        function testDeviceNoData(this)
+            filters = this.paramsDevice;
+            filters.dateFrom = '2000-01-01';
+            filters.dateTo = '2000-01-02';
+            result = this.onc.getListByDevice(filters);
+            assertEmpty(this, result.files);
+        end
+
+        function testDeviceValidParamsOnePage(this)
+            result = this.onc.getListByDevice(this.paramsDevice);
+            resultAllPages = this.onc.getListByDevice(this.paramsDeviceMultiPages, 'allPages', true);
+            assertTrue(this, length(result.files) > this.paramsDeviceMultiPages.rowLimit, ...
+                        'Test should return at least `rowLimit` rows.');
+            assertEmpty(this, result.next, 'Test should return only one page.');
+            assertEqual(this, resultAllPages.files, result.files, ...
+                        'Test should concatenate rows for all pages.');
+            assertEmpty(this, resultAllPages.next, 'Test should return only one page.');
+        end
+
+        function testDeviceValidParamsMultiplePages(this)
+            result = this.onc.getListByDevice(this.paramsDeviceMultiPages);
+            assertEqual(this, length(result.files), this.paramsDeviceMultiPages.rowLimit, ...
+                        'Test should only return `rowLimit` rows.');
+            assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
+        end
         
-        function test01_list_by_location_1_page(this)
-            result = this.onc.getListByLocation(this.F_LOCATION1);
-            verifyLength(this, result.files, 15);
+        %% Testing download
+
+        function testDownloadInvalidParamValue(this)
+            verifyError(this, @() this.onc.getFile('FAKEFILE.XYZ'), 'onc:http400:error96');
         end
 
-        function test02_list_by_location_3_pages(this)
-            result = this.onc.getListByLocation(this.F_LOCATION1, true);
-            verifyLength(this, result.files, 15);
+        function testDownloadInvalidParamsMissingRequired(this)
+            verifyError(this, @() this.onc.getFile(), 'onc:http400:error128');
         end
 
-        function test03_list_by_location_1_page_filter_ext(this)
-            result = this.onc.getListByLocation(this.F_LOCATIONFULL);
-            verifyLength(this, result.files, 1);
+        function testDownloadValidParams(this)
+            this.updateOncOutPath('output/testDownloadValidParams');
+            filename = 'BPR-Folger-59_20191123T000000.000Z.txt';
+            this.onc.getFile(filename);
+            assertTrue(this, exist([this.onc.outPath '/' filename], 'file') == 2);
+            verifyError(this, @() this.onc.getFile(filename), 'onc:FileExistsError');
+            this.onc.getFile(filename, 'overwrite', true);
+            verify_files_in_path(this, this.onc.outPath, 1);
         end
 
-        function test04_list_by_location_wrong_filters(this)
-            result = this.onc.getListByLocation(this.F_DEVICE1);
-            verify_error_response(this, result);
+        %% Testing direct download
+
+        function testDirectDownloadValidParamsOnePage(this)
+            this.updateOncOutPath('output/testDirectDownloadValidParamsOnePage');
+            data = this.onc.getListByLocation(this.paramsLocation);
+            result = this.onc.getDirectFiles(this.paramsLocation);
+            verify_files_in_path(this, this.onc.outPath, length(data.files));
+            assertEqual(this, result.stats.fileCount, length(data.files));
         end
 
-        function test05_list_by_device_1_page_filter_ext(this)
-            result = this.onc.getListByDevice(this.F_DEVICE1EXT);
-            verifyLength(this, result.files, 4);
+        function testDirectDownloadValidParamsMultiplePages(this)
+            this.updateOncOutPath('output/testDirectDownloadValidParamsMultiplePages');
+            result = this.onc.getDirectFiles(this.paramsLocationMultiPages);
+            verify_files_in_path(this, this.onc.outPath, this.paramsLocationMultiPages.rowLimit);
+            assertEqual(this, result.stats.fileCount, this.paramsLocationMultiPages.rowLimit)
         end
-
-        function test06_get_file(this)
-            onc9 = this.prepareOnc('output/09/06');
-            onc9.getFile('NAXYS_HYD_007_20091231T235919.476Z-spect-small.png');
-            verify_files_in_path(this, onc9.outPath, 1);
-        end
-
-        function test07_direct_files_device_returnOptions(this)
-            onc9 = this.prepareOnc('output/09/07');
-            result = onc9.getDirectFiles(this.F_GETDIRECT_DEV);
-            verify_files_in_path(this, onc9.outPath, 12);
-            verifyLength(this, result.downloadResults, 12);
-        end
-
-        function test08_direct_files_location_overwrite(this)
-            onc9 = this.prepareOnc('output/09/08');
-            result = onc9.getDirectFiles(this.F_GETDIRECT_LOC);
-            verifyLength(this, result.downloadResults, 1);
-            verify_field_value(this, result.downloadResults(1), 'status', 'completed');
-            verify_files_in_path(this, onc9.outPath, 1);
-            result = onc9.getDirectFiles(this.F_GETDIRECT_LOC);
-            verifyLength(this, result.downloadResults, 1);
-            verify_field_value(this, result.downloadResults(1), 'status', 'skipped');
-            verify_files_in_path(this, onc9.outPath, 1);
-        end
-
-        function test09_getfile_wrong_filename(this)
-            onc9 = this.prepareOnc('output/09/09');
-            result = onc9.getFile('FAKEFILE.XYZ');
-            verify_error_response(this, result);
-        end
-
-        function test10_direct_files_no_source(this)
-            onc9 = this.prepareOnc('output/09/10');
-            verifyError(this, ...
-                @() onc9.getDirectFiles(this.F_FAKE), ...
-                'Archive:InvalidFilters');
-        end
-
-        function test11_list_by_device_wrong_filters(this)
-            result = this.onc.getListByDevice(this.F_FAKE);
-            verify_error_response(this, result);
-        end
-
-        function test12_list_by_location_3_pages_archiveLocations(this)
-            result = this.onc.getListByLocation(this.F_LOC_RETURN1, true);
-            verifyLength(this, result.files, 15);
-            verify_has_field(this, result.files(1), 'archiveLocation');
-        end
-
-        function test13_list_by_device_3_pages_extension_all(this)
-            result = this.onc.getListByLocation(this.F_LOC_RETURN2, true);
-            verifyLength(this, result.files, 2);
-            verify_has_field(this, result.files(1), 'uncompressedFileSize')
-        end
-
-        function test14_save_file_empty_outpath(this)
-            filename = 'NAXYS_HYD_007_20091231T235919.476Z-spect-small.png';
-            onc9   = this.prepareOnc('');
-            result = onc9.getFile(filename);
-            verifyTrue(this, isfile(filename));
-            delete(filename); % clean up
-        end
-
     end
 end
