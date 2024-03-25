@@ -37,7 +37,7 @@ classdef Test09_ArchiveFiles < matlab.unittest.TestCase
     
     methods (TestClassSetup)
         function classSetup(this)
-            config = globals();
+            config = load_config();
             this.onc = Onc(config.token, config.production, config.showInfo, this.outPath, config.timeout);
         end
     

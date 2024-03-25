@@ -30,7 +30,7 @@ classdef Test07_DataProductDelivery < matlab.unittest.TestCase
 
     methods (TestClassSetup)
         function classSetup(this)
-            config = globals();
+            config = load_config();
             this.outPath = 'output';
             this.onc = Onc(config.token, config.production, config.showInfo, this.outPath, config.timeout);
             this.maxRetries = 100;

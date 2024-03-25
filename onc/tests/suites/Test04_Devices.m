@@ -9,7 +9,7 @@ classdef Test04_Devices < matlab.unittest.TestCase
     
     methods (TestClassSetup)
         function classSetup(this)
-            config = globals();
+            config = load_config();
             this.onc = Onc(config.token, config.production, config.showInfo, config.outPath, config.timeout);
         end
     end
