@@ -39,7 +39,6 @@ function print_error_message(payload)
         payload = jsondecode(payload);
     end
 
-    %if isfield(payload, 'errors')
     for i = 1 : numel(payload.errors)
         e = payload.errors(i);
         msg = e.errorMessage;

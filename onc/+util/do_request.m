@@ -25,7 +25,6 @@ function [result, info] = do_request(url, filters, varargin)
     % run and time request
     if showInfo, fprintf('\nRequesting URL:\n   %s\n', fullUrl); end
     tic
-    %response = send(request, uri, options);
     response = request.send(uri,options);
     
     duration = toc;
@@ -52,7 +51,8 @@ function [result, info] = do_request(url, filters, varargin)
         otherwise
             util.print_error(response, fullUrl);
             if status == 400 || status == 401
-                throw(util.prepare_exception(status,double(response.Body.Data.errors.errorCode)));
+                errorStruct = response.Body.Data;
+                throw(util.prepare_exception(status, double(errorStruct.errors.errorCode)));
             else
                 throw(util.prepare_exception(status));
             end
