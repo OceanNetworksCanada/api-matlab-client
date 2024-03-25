@@ -98,7 +98,7 @@ classdef OncDelivery < onc.Service
             % runDataProduct (dpRequestId)
             %
             % * dpRequestId (int) Request id obtained by requestDataProduct()
-            % - waitComplete @TODO
+            % - waitComplete: wait until dp finish when set to true (default)
             %
             % Returns: (struct) information of the run process
             %
