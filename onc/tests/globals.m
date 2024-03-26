@@ -1,12 +1,16 @@
 function config = globals()
     clc;
-            
+ 
     addpath(genpath(''));
     addpath(genpath('util'));
     addpath(genpath('suites'));
     addpath(genpath('../'));
             
-
+    % Change the current folder to the folder of this m-file.
+    if(~isdeployed)
+        cd(fileparts(which(mfilename)));
+    end       
+    
     % grab token from "TOKEN" file
     f = fopen('TOKEN','r');
     if f > 0
