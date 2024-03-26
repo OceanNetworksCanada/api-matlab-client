@@ -6,7 +6,6 @@ function config = globals()
     addpath(genpath('suites'));
     addpath(genpath('../'));
             
-    % Change the current folder to the folder of this m-file.
 
     % grab token from "TOKEN" file
     f = fopen('TOKEN','r');
