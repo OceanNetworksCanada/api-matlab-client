@@ -10,10 +10,10 @@ function config = globals()
     % grab token from "TOKEN" file
     f = fopen('TOKEN','r');
     if f > 0
-       line = fgetl(f);
+       token = fgetl(f);
        fclose(f);
     else
-       line = getenv('TOKEN_STRING');
+       token = getenv('TOKEN');
     end
     
     % Set and save config
@@ -21,7 +21,7 @@ function config = globals()
     config.showInfo = false;
     config.outPath = 'output';
     config.timeout = 60;
-    config.token = strtrim(line);    
+    config.token = strtrim(token);    
 
     save('config.mat', 'config')
 end
