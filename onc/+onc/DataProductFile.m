@@ -57,22 +57,19 @@ classdef DataProductFile < handle
             % * maxRetries: (int)     As provided by the Onc class
             %
             % Returns: (integer) The final response's HTTP status code
+            
             log = onc.DPLogger();
-
             this.status = 202;
-            saveResult  = 0;
+            request = matlab.net.http.RequestMessage;
+            uri = matlab.net.URI(this.baseUrl);
+            uri.Query = matlab.net.QueryParameter(this.filters);
+            fullUrl = char(uri);
+            options = matlab.net.http.HTTPOptions('ConnectTimeout', timeout);
             while this.status == 202
-                % prepare HTTP request
-                request = matlab.net.http.RequestMessage;
-                uri = matlab.net.URI(this.baseUrl);
-                uri.Query = matlab.net.QueryParameter(this.filters);
-                fullUrl = char(uri);
-                options = matlab.net.http.HTTPOptions('ConnectTimeout', timeout, 'ConvertResponse', false);
-
                 % run and time request
                 if this.showInfo, log.printLine(sprintf('Requesting URL:\n   %s', fullUrl)); end
                 tic
-                response = send(request, uri, options);
+                response  = request.send(uri,options);
                 duration = toc;
                 
                 this.downloadUrl = fullUrl;
@@ -89,6 +86,7 @@ classdef DataProductFile < handle
                 s = this.status;
                 if s == 200
                     % File downloaded, get filename from header and save
+                
                     this.downloaded = true;
                     filename        = this.extractNameFromHeader(response);
                     this.fileName   = filename;
@@ -98,34 +96,42 @@ classdef DataProductFile < handle
                     if length(lengthData) == 1
                         this.fileSize = str2double(lengthData.Value);
                     else
-                        this.fileSize = strlength(response.Body.Data);
+                        ext = util.extractFileExtension(filename);
+                        if strcmp(ext, 'xml')
+                            this.fileSize = length(xmlwrite(response.Body.Data));
+                        else
+                            this.fileSize = strlength(response.Body.Data);
+                        end
                     end
-                    %save_as_file doesn't work properly! Use urlwrite instead
-                    [~, saveResult] = urlwrite(uri.EncodedURI,fullfile(outPath, filename));
-                    %saveResult = util.save_as_file(response, outPath, filename, overwrite);
+                    try
+                        saveResult = util.save_as_file(response.Body.Data, outPath, filename, 'overwrite', overwrite);
+                    catch ME
+                        if strcmp(ME.identifier, 'onc:FileExistsError')
+                            log.printLine(sprintf('Skipping "%s": File already exists\n', this.fileName));
+                            this.status = 777;
+                            saveResult = -2;
+                            this.downloaded = false;
+                        else
+                            rethrow(ME);
+                        end
+                    end
                     this.downloadingTime = round(duration, 3);
 
                     % log status
                     if saveResult == 0
-                        log.printLine(sprintf('Downloaded "%s"', this.fileName));
-                    elseif saveResult == -2
-                        log.printLine(sprintf('Skipping "%s": File already exists', this.fileName));
-                        this.status = 777;
+                        log.printLine(sprintf('Downloaded "%s"\n', this.fileName));
                     end
                 elseif s == 202
                     % Still processing, wait and retry
-                    log.printResponse(jsondecode(response.Body.Data));
+                    log.printResponse(response.Body.Data);
                     pause(pollPeriod);
                 elseif s == 204
                     % No data found
-                    log.printLine('No data found.');
+                    log.printLine('No data found.\n');
                 elseif s == 400
                     % API Error
                     util.print_error(response, fullUrl);
-                    err = struct( ...
-                        'message', sprintf('The request failed with HTTP status %d\n', this.status), ...
-                        'identifier', 'DataProductFile:HTTP400');
-                    error(err);
+                    throw(util.prepare_exception(s, double(response.Body.Data.errors.errorCode)));
                 elseif s == 404
                     % Index too high, no more files to download
                 else
@@ -139,7 +145,7 @@ classdef DataProductFile < handle
             endStatus = this.status;
         end
 
-        function filename = extractNameFromHeader(this, response)
+        function filename = extractNameFromHeader(~,response)
             %% Return the file name extracted from the HTTP response
             %
             % * response (object) The successful (200) httr response obtained from a download request
