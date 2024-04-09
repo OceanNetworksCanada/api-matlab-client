@@ -32,7 +32,7 @@ if overwrite || not(isfile(fullPath))
         end
         
         if f ~= -1
-            fwrite(f, response.Body.Data);
+            fwrite(f, response);
         else
             endCode = -1;
             return;
@@ -44,8 +44,7 @@ if overwrite || not(isfile(fullPath))
         return;
     end
 else
-    endCode = -2;
-    return;
+    throw(MException('onc:FileExistsError', 'Data product file exists in destination but overwrite is set to false'));
 end
 
 endCode = 0;

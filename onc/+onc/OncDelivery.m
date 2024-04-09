@@ -33,18 +33,11 @@ classdef OncDelivery < onc.Service
             fileList = [];
 
             % Request the product
-            [rqData, status] = this.requestDataProduct(filters);
-            if util.is_failed_response(rqData, status)
-                r = rqData;
-                return
-            end
+            [rqData, ~] = this.requestDataProduct(filters);
 
             % Run the product request
             [runData, status] = this.runDataProduct(rqData.dpRequestId);
-            if util.is_failed_response(runData, status)
-                r = runData;
-                return;
-            end
+
 
             if downloadResultsOnly
                 % Only run and return links
