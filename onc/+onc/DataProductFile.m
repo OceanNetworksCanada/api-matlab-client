@@ -98,10 +98,6 @@ classdef DataProductFile < handle
                     else
                         this.fileSize = strlength(response.Body.Data);
                     end
-                    %save_as_file doesn't work properly! Use urlwrite instead
-                    %[~, saveResult] = urlwrite(uri.EncodedURI,fullfile(outPath, filename));
-                    % neither urlwrite nor save_as_file works properly, use websave
-
 
                     savefilename = fullfile(outPath, filename);
                     % Create folder if not exist
@@ -127,7 +123,6 @@ classdef DataProductFile < handle
                 elseif s == 202
                     % Still processing, wait and retry
                     log.printResponse(jsondecode(response.Body.Data));
-                    %log.printResponse(response.Body.Data);
                     pause(pollPeriod);
                 elseif s == 204
                     % No data found
