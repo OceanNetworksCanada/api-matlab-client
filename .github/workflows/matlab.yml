@@ -2,9 +2,13 @@ name: Run MATLAB Tests
 
 on:
   pull_request:
-    branches: main
+    branches: 
+      - 'main'
+      - 'release-staging-*'
   push:
-    branches: main
+    branches: 
+      - 'main'
+      - 'release-staging-*'
   workflow_dispatch:
   
 jobs:
@@ -33,4 +37,5 @@ jobs:
          source-folder: 'onc'
       env:
         TOKEN: ${{ secrets.TOKEN }}
+        ONC_ENV: true
     
