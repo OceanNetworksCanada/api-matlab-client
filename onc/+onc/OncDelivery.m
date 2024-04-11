@@ -76,12 +76,9 @@ classdef OncDelivery < onc.Service
             fprintf('Requesting data product...\n');
             [r, info] = this.doRequest(url, filters);
             status = info.status;
-            if not(util.is_failed_response(r, status))
-                this.estimatePollPeriod(r);
-                this.printProductRequest(r);
-            else
-                throw(util.prepare_exception(status));
-            end
+            this.estimatePollPeriod(r);
+            this.printProductRequest(r);
+
         end
 
         function [r, status] = runDataProduct(this, dpRequestId, waitComplete)
@@ -106,16 +103,18 @@ classdef OncDelivery < onc.Service
 
             % run timed run request
             tic
+            cancelUrl = url + "?method=cancel&token="+string(this.token)+"&dpRequestId=" + string(dpRequestId);
+            if waitComplete
+                fprintf('\nTo cancel this data product, visit url:\n   %s\n', cancelUrl);
+            else
+                fprintf('\nTo cancel this data product, please execute command ''onc.cancelDataProduct(%d)''\n', dpRequestId)
+            end
             flag = 'queued';
             while ~strcmp(flag,'complete') && ~strcmp(flag,'cancelled')
                 [response, info] = this.doRequest(url, filters);
                 status = info.status;
                 r.requestCount = r.requestCount + 1;
                 
-                % guard against failed request
-                if util.is_failed_response(response, status)
-                    throw(util.prepare_exception(status));
-                end
                 % repeat only if waitComplete
                 if waitComplete
                     log.printResponse(response);
@@ -138,6 +137,40 @@ classdef OncDelivery < onc.Service
             for i = 1 : numel(response)
                 run = response(i);
                 r.runIds = [r.runIds, run.dpRunId];
+            end
+        end
+        
+        function response = checkDataProduct(this, dpRequestId)
+            %% Check the status of a data product
+            %
+            %
+            % checkDataProduct (dpRequestId)
+            %
+            % * dpRequestId (int) Request id obtained by requestDataProduct()
+            %
+            % Returns: response (struct): status of this data product
+            %
+            url = sprintf('%sapi/dataProductDelivery', this.baseUrl);
+            filters = struct('method', 'status', 'token', this.token, 'dpRequestId', dpRequestId);
+            response = this.doRequest(url, filters);
+        end
+
+        function [response, info] = cancelDataProduct(this, dpRequestId)
+            %% Cancel a running data product
+            %
+            %
+            % cancelDataProduct (dpRequestId)
+            %
+            % * dpRequestId (int) Request id obtained by requestDataProduct()
+            %
+            % Returns: response (struct): cancel process status and message
+            %          info (struct): cancel process http code and status
+            %
+            url = sprintf('%sapi/dataProductDelivery', this.baseUrl);
+            filters = struct('method', 'cancel', 'token', this.token, 'dpRequestId', dpRequestId);
+            [response, info] = this.doRequest(url, filters);
+            if isfield(response, 'status') && strcmp(response.status, 'cancelled') && info.status == 200
+                fprintf("Data product with request id %d and run id %d was successfully cancelled\n", dpRequestId, response.dpRunId);
             end
         end
 
@@ -169,8 +202,32 @@ classdef OncDelivery < onc.Service
                 fileData = this.downloadProductFiles(runId, metadata, maxRetries, overwrite);
             end
         end
+
+        function [response, info] = restartDataProduct(this, dpRequestId, waitComplete)
+            %% Restart a cancelled data product
+            %
+            %
+            % restartDataProduct (dpRequestId, waitComplete)
+            %
+            % * dpRequestId (int) Request id obtained by requestDataProduct()
+            % - waitComplete (optional): wait until dp finish when set to true (default)
+            %
+            % Returns: response (struct): restart process status and message
+            %          info (struct): restart process http code and status
+            %
+            if ~exist('waitComplete','var'), waitComplete = true; end 
+            url = sprintf('%sapi/dataProductDelivery', this.baseUrl);
+            filters = struct('method', 'restart', 'token', this.token, 'dpRequestId', dpRequestId);
+            [response, info] = this.doRequest(url, filters);
+            if isfield(response, 'status') && (strcmp(response.status, 'data product running') || strcmp(response.status, 'queued')) && info.status == 200
+                fprintf("Restarted data product with request id %d and run id %d\n", dpRequestId, response.dpRunId);
+            end
+            if waitComplete
+                [response, info] = this.runDataProduct(dpRequestId, true);
+            end
+        end
     end
-    
+        
     methods (Access = private, Hidden = true)
         function fileList = downloadProductFiles(this, runId, varargin)
             %% Download all data product files for provided run id

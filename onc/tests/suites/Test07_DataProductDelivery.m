@@ -113,10 +113,40 @@ classdef Test07_DataProductDelivery < matlab.unittest.TestCase
            
             
         end
+        
+        %% Testing run method
+        function testInvalidRequestId(this)
+            verifyError(this, @() this.onc.runDataProduct(1234567890), 'onc:http400:error127');
+        end
+        
+        %% Testing download method
+        function testInvalidRunId(this)
+            verifyError(this, @() this.onc.downloadDataProduct(1234567890), 'onc:http400:error127');
+        end
 
+        %% Testing cancel method
+        function testCancelWithInvalidRequestId(this)
+            verifyError(this, @() this.onc.cancelDataProduct(1234567890), 'onc:http400:error127');
+        end
+
+        %% Testing status method
+        function testStatusWithInvalidRequestId(this)
+            verifyError(this, @() this.onc.checkDataProduct(1234567890), 'onc:http400:error127');
+        end
+
+        %% Testing restart method
+        function testRestartWithInvalidRequestId(this)
+            verifyError(this, @() this.onc.restartDataProduct(1234567890), 'onc:http400:error127');
+        end
+
+        %% Integration tests
         function testValidManual(this)
             this.updateOncOutPath('output/testValidManual');
             requestId = this.onc.requestDataProduct(this.Params).dpRequestId;
+            statusBeforeDownload = this.onc.checkDataProduct(requestId);
+
+            assertEqual(this, statusBeforeDownload.searchHdrStatus, 'OPEN');
+            
             runId = this.onc.runDataProduct(requestId).runIds(1);
             data   = this.onc.downloadDataProduct(runId);
             verifyTrue(this, length(data) == 3, ...
@@ -133,16 +163,30 @@ classdef Test07_DataProductDelivery < matlab.unittest.TestCase
             verify_files_in_path(this, this.onc.outPath, 3);
             verify_field_value_type(this, data(1), this.expectedFields);
             
+            statusAfterDownload = this.onc.checkDataProduct(requestId);
+            assertEqual(this, statusAfterDownload.searchHdrStatus, 'COMPLETED');
         end
-        
-        %% Testing run method
-        function testInvalidRequestId(this)
-            verifyError(this, @() this.onc.runDataProduct(1234567890), 'onc:http400:error127');
-        end
-        
-        %% Testing download method
-        function testInvalidRunId(this)
-            verifyError(this, @() this.onc.downloadDataProduct(1234567890), 'onc:http400:error127');
+
+        function testValidCancelRestart(this)
+            this.updateOncOutPath('output/testValidCancelRestart');
+            requestId = this.onc.requestDataProduct(this.Params).dpRequestId;
+            runId = this.onc.runDataProduct(requestId, false).runIds(1);
+            responseCancel = this.onc.cancelDataProduct(requestId);
+
+            verify_field_value(this, responseCancel, 'dpRunId', runId);
+            verify_field_value(this, responseCancel, 'status', 'cancelled');
+
+            %update MATLAB:nonExistentField error to actual http400 error for this test 
+            %after api service fixes the issue that this 400 error does not contain "errors" field
+            assertError(this, @() this.onc.downloadDataProduct(runId), 'MATLAB:nonExistentField')
+
+            runIdAfterRestart = this.onc.restartDataProduct(requestId).runIds(1);
+            assertEqual(this, runIdAfterRestart, runId);
+
+            responseDownload = this.onc.downloadDataProduct(runId);
+            assertEqual(this, length(responseDownload), 3,  "The first two are png files, and the third one is the metadata");
+            verify_files_in_path(this, this.onc.outPath, 3);
+            verify_field_value_type(this, responseDownload(1), this.expectedFields);
         end
     end
         
