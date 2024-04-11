@@ -25,6 +25,7 @@ if overwrite || not(isfile(fullPath))
     try
         matlabVersion = version('-release');
         year = str2double(matlabVersion(1:end-1));
+
         ext = util.extractFileExtension(fileName);
 
         % if result is an image file or .xml file, use other save methods instead of fwrite. 

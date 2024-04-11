@@ -15,13 +15,14 @@ function [varargout] = param(args, varargin)
         addOptional(p, name, defValue);
     end
     
-    if n == 2
-        % Handle single element separately to avoid problem with struct param
+    if n == 2 && isstruct(varargin{2})
+        % Handle struct param seperately
         name = names(1);
         if length(args) == 1
+            % one struct given
             varargout{1} = args{1};
         else
-            varargout{1} = varargin{2};
+            varargout{1} = varargin{2}; 
         end
     else
         % parse using inputParser

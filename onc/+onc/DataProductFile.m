@@ -64,7 +64,9 @@ classdef DataProductFile < handle
             uri = matlab.net.URI(this.baseUrl);
             uri.Query = matlab.net.QueryParameter(this.filters);
             fullUrl = char(uri);
+
             options = matlab.net.http.HTTPOptions('ConnectTimeout', timeout);
+            
             while this.status == 202
                 % run and time request
                 if this.showInfo, log.printLine(sprintf('Requesting URL:\n   %s', fullUrl)); end
@@ -115,6 +117,7 @@ classdef DataProductFile < handle
                             rethrow(ME);
                         end
                     end
+
                     this.downloadingTime = round(duration, 3);
 
                     % log status
@@ -132,6 +135,7 @@ classdef DataProductFile < handle
                     % API Error
                     util.print_error(response, fullUrl);
                     throw(util.prepare_exception(s, double(response.Body.Data.errors.errorCode)));
+
                 elseif s == 404
                     % Index too high, no more files to download
                 else
