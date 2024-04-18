@@ -64,7 +64,9 @@ classdef DataProductFile < handle
             uri = matlab.net.URI(this.baseUrl);
             uri.Query = matlab.net.QueryParameter(this.filters);
             fullUrl = char(uri);
-            options = matlab.net.http.HTTPOptions('ConnectTimeout', timeout, 'ConvertResponse', false);
+
+            options = matlab.net.http.HTTPOptions('ConnectTimeout', timeout);
+            
             while this.status == 202
                 % run and time request
                 if this.showInfo, log.printLine(sprintf('Requesting URL:\n   %s', fullUrl)); end
@@ -93,36 +95,36 @@ classdef DataProductFile < handle
                     
                     % Obtain filesize from headers, or fallback to body string length
                     lengthData = response.getFields('Content-Length');
+                    [~, ~, ext] = fileparts(filename);
                     if length(lengthData) == 1
                         this.fileSize = str2double(lengthData.Value);
+                    elseif strcmp(ext, '.xml')
+                        this.fileSize = length(xmlwrite(response.Body.Data));
                     else
                         this.fileSize = strlength(response.Body.Data);
                     end
+                    try
+                        saveResult = util.save_as_file(response.Body.Data, outPath, filename, 'overwrite', overwrite);
+                    catch ME
+                        if strcmp(ME.identifier, 'onc:FileExistsError')
+                            log.printLine(sprintf('Skipping "%s": File already exists\n', this.fileName));
+                            this.status = 777;
+                            saveResult = -2;
+                            this.downloaded = false;
+                        else
+                            rethrow(ME);
+                        end
+                    end
 
-                    savefilename = fullfile(outPath, filename);
-                    % Create folder if not exist
-                    if ~exist(outPath,'dir')
-                        mkdir(outPath)
-                    end
-                    % saveResult  -2: File exists and set to not overwrite 0: done
-                    if ~overwrite && exist(savefilename,'file') == 2
-                        saveResult = -2; 
-                    else
-                        websave(savefilename,uri.EncodedURI);
-                        saveResult = 0;
-                    end
                     this.downloadingTime = round(duration, 3);
 
                     % log status
                     if saveResult == 0
                         log.printLine(sprintf('Downloaded "%s"\n', this.fileName));
-                    elseif saveResult == -2
-                        log.printLine(sprintf('Skipping "%s": File already exists\n', this.fileName));
-                        this.status = 777;
                     end
                 elseif s == 202
                     % Still processing, wait and retry
-                    log.printResponse(jsondecode(response.Body.Data));
+                    log.printResponse(response.Body.Data);
                     pause(pollPeriod);
                 elseif s == 204
                     % No data found
@@ -130,7 +132,8 @@ classdef DataProductFile < handle
                 elseif s == 400
                     % API Error
                     util.print_error(response, fullUrl);
-                    throw(util.prepare_exception(s, double(jsondecode(response.Body.Data).errors.errorCode)));
+                    throw(util.prepare_exception(s, double(response.Body.Data.errors.errorCode)));
+
                 elseif s == 404
                     % Index too high, no more files to download
                 else
