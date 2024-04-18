@@ -25,13 +25,11 @@ if overwrite || not(isfile(fullPath))
     try
         matlabVersion = version('-release');
         year = str2double(matlabVersion(1:end-1));
-
-        ext = util.extractFileExtension(fileName);
-
+        [~, ~, ext] = fileparts(fileName);
         % if result is an image file or .xml file, use other save methods instead of fwrite. 
-        if strcmp(ext, 'png') || strcmp(ext, 'jpg')
+        if strcmp(ext, '.png') || strcmp(ext, '.jpg')
             imwrite(dataToWrite, fullPath);
-        elseif strcmp(ext, 'xml')
+        elseif strcmp(ext, '.xml')
             xmlwrite(fullPath, dataToWrite);
         else
             % open output file

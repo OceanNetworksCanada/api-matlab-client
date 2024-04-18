@@ -95,15 +95,13 @@ classdef DataProductFile < handle
                     
                     % Obtain filesize from headers, or fallback to body string length
                     lengthData = response.getFields('Content-Length');
+                    [~, ~, ext] = fileparts(filename);
                     if length(lengthData) == 1
                         this.fileSize = str2double(lengthData.Value);
+                    elseif strcmp(ext, '.xml')
+                        this.fileSize = length(xmlwrite(response.Body.Data));
                     else
-                        ext = util.extractFileExtension(filename);
-                        if strcmp(ext, 'xml')
-                            this.fileSize = length(xmlwrite(response.Body.Data));
-                        else
-                            this.fileSize = strlength(response.Body.Data);
-                        end
+                        this.fileSize = strlength(response.Body.Data);
                     end
                     try
                         saveResult = util.save_as_file(response.Body.Data, outPath, filename, 'overwrite', overwrite);
