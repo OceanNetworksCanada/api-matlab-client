@@ -22,7 +22,9 @@ function config = globals()
     
     % get environment from ONC_ENV or use QA as default
     config.production = getenv('ONC_ENV');
-    if isempty(config.production)
+    if strcmp(config.production, 'prod')
+        config.production = true;
+    else
         config.production = false;
     end
     % Set and save config
