@@ -170,9 +170,9 @@ classdef OncDelivery < onc.Service
             filters = struct('method', 'cancel', 'token', this.token, 'dpRequestId', dpRequestId);
             [response, info] = this.doRequest(url, filters);
             if isfield(response, 'status') && strcmp(response.status, 'cancelled') && info.status == 200
-                fprintf("The data product with request id %d and run id %d has been successfully cancelled\n", dpRequestId, response.dpRunId);
+                fprintf("The data product with request id %d and run id %d has been successfully cancelled.\n", dpRequestId, response.dpRunId);
             else
-                fprintf("Failed to cancel the data Product.");
+                fprintf("Failed to cancel the data Product.\n");
             end
         end
 
@@ -222,9 +222,9 @@ classdef OncDelivery < onc.Service
             filters = struct('method', 'restart', 'token', this.token, 'dpRequestId', dpRequestId);
             [response, info] = this.doRequest(url, filters);
             if isfield(response, 'status') && (strcmp(response.status, 'data product running') || strcmp(response.status, 'queued')) && info.status == 200
-                fprintf("The data product with request id %d and run id %d has been successfully restarted\n", dpRequestId, response.dpRunId);
+                fprintf("The data product with request id %d and run id %d has been successfully restarted.\n", dpRequestId, response.dpRunId);
             else
-                fprintf("Failed to restart the data product");
+                fprintf("Failed to restart the data product.\n");
             end
             if waitComplete
                 [response, info] = this.runDataProduct(dpRequestId, true);
