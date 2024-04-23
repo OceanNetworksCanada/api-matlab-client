@@ -37,5 +37,5 @@ jobs:
          source-folder: 'onc'
       env:
         TOKEN: ${{ secrets.TOKEN }}
-        ONC_ENV: true
+        ONC_ENV: 'prod'
     

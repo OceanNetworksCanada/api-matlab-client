@@ -163,7 +163,7 @@ classdef Test08_RealTime < matlab.unittest.TestCase
             result = this.onc.getDirectByDevice(this.paramsDevice);
             resultAllPages = this.onc.getDirectByDevice(this.paramsDeviceMultiPages, 'allPages', true);
             assertTrue(this, length(result.sensorData(1).data.values) > this.paramsDeviceMultiPages.rowLimit, ...
-                        'Test should return at least `rowLimit` rows for each sensor.');
+                        'Test should return at least `rowLimit` rows.');
             assertEmpty(this, result.next, 'Test should return only one page.');
             assertEqual(this, resultAllPages.sensorData(1).data, result.sensorData(1).data, ...
                         'Test should concatenate rows for all pages.');
@@ -178,8 +178,7 @@ classdef Test08_RealTime < matlab.unittest.TestCase
         end
 
         %% Testing rawdata device
-        %{
-        % waiting for python updates
+
         function testRawDeviceInvalidParamValue(this)
             filters = this.paramsDevice;
             filters.deviceCode = 'XYZ123';
@@ -196,27 +195,29 @@ classdef Test08_RealTime < matlab.unittest.TestCase
             filters = this.paramsDevice;
             filters.dateFrom = '2000-01-01';
             filters.dateTo = '2000-01-02';
-            result = this.onc.getDirectByDevice(filters);
-            assertEmpty(this, result.sensorData);
+            result = this.onc.getDirectRawByDevice(filters);
+            assertEmpty(this, result.data.lineTypes);
+            assertEmpty(this, result.data.readings);
+            assertEmpty(this, result.data.times);
         end
 
         function testRawDeviceValidParamsOnePage(this)
-            result = this.onc.getDirectByDevice(this.paramsDevice);
-            resultAllPages = this.onc.getDirectByDevice(this.paramsDeviceMultiPages, 'allPages', true);
-            assertTrue(this, length(result.sensorData(1).data.values) > this.paramsDeviceMultiPages.rowLimit, ...
+            result = this.onc.getDirectRawByDevice(this.paramsDevice);
+            resultAllPages = this.onc.getDirectRawByDevice(this.paramsDeviceMultiPages, 'allPages', true);
+            assertTrue(this, length(result.data.readings) > this.paramsDeviceMultiPages.rowLimit, ...
                         'Test should return at least `rowLimit` rows for each sensor.');
             assertEmpty(this, result.next, 'Test should return only one page.');
-            assertEqual(this, resultAllPages.sensorData(1).data, result.sensorData(1).data, ...
+            assertEqual(this, resultAllPages.data, result.data, ...
                         'Test should concatenate rows for all pages.');
             assertEmpty(this, resultAllPages.next, 'Test should return only one page.');
         end
         
         function testRawDeviceValidParamsMultiplePages(this)
-            result = this.onc.getDirectByDevice(this.paramsDeviceMultiPages);
-            assertEqual(this, length(result.sensorData(1).data.values), this.paramsDeviceMultiPages.rowLimit, ...
+            result = this.onc.getDirectRawByDevice(this.paramsDeviceMultiPages);
+            assertEqual(this, length(result.data.readings), this.paramsDeviceMultiPages.rowLimit, ...
                         'Test should only return `rowLimit` rows for each sensor.');
             assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
         end
-        %}
+        
     end
 end

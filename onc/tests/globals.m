@@ -11,7 +11,7 @@ function config = globals()
         cd(fileparts(which(mfilename)));
     end       
     
-    % grab token from "TOKEN" file
+    % grab token from "TOKEN" file or get from env
     f = fopen('TOKEN','r');
     if f > 0
        token = fgetl(f);
@@ -20,8 +20,14 @@ function config = globals()
        token = getenv('TOKEN');
     end
     
+    % get environment from ONC_ENV or use QA as default
+    config.production = getenv('ONC_ENV');
+    if strcmp(config.production, 'prod')
+        config.production = true;
+    else
+        config.production = false;
+    end
     % Set and save config
-    config.production = true;
     config.showInfo = false;
     config.outPath = 'output';
     config.timeout = 60;
