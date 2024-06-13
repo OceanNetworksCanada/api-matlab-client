@@ -84,11 +84,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     * timeout (int, optional, default = 60) - Number of seconds before a request to the API is canceled
 </pre>
 <p>Returns: The Onc object created.</p>
-<p>Examples:</p>  
+<p><b>Examples:</b></p>  
 <pre class="codeinput">
 onc = ONC("YOUR_TOKEN_HERE", 'showInfo', true, 'outPath', 'myOutPath');
 </pre>
-<p>For detailed information and usage examples, run doc command or visit MATLAB's help browser <a href="https://www.mathworks.com/help/matlab/">https://data.oceannetworks.ca/Profile</a> then find Ocean Networks Canada API Client under supplemental software</p>
+<p>For detailed information and usage examples, run doc command or visit MATLAB's help browser <a href="https://www.mathworks.com/help/matlab/">https://www.mathworks.com/help/matlab/</a> then find Ocean Networks Canada API Client under supplemental software</p>
+<p><b>Source code: </b></p>
 <pre class="codeinput"><span class="keyword">function</span> this = Onc(token, varargin)
     p = inputParser;
     addRequired(p, <span class="string">'token'</span>, @ischar);

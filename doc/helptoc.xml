@@ -3,7 +3,8 @@
 <toc version="2.0">
 <!-- First tocitem specifies top level in Help browser Contents pane -->
 <!-- This can be a roadmap page, as shown below, or a content page -->
-    <tocitem target="Onc.html">MyToolbox now
+    <tocitem target="main.html"> Ocean Networks Canada API Client Library
+        <!-- Ocean Networks Canada API Client Library -->
         <!-- Nest tocitems to create hierarchical entries in  Contents-->
         <!-- To include icons, use the following syntax for tocitems: -->
         <!-- <tocitem target="foo.html" image="HelpIcon.NAME"> -->
@@ -31,11 +32,24 @@
         </tocitem> -->
         <!-- Function reference next -->
         <!-- First item is page describing function categories, if any -->
+        <tocitem> How to use
+        <tocitem target="Onc.html"> Onc class
+        </tocitem>
         <tocitem target="OncDiscovery.html">
             Discovery Service
         </tocitem>
-        <tocitem target="OncDiscovery.html">
+        <tocitem target="OncDelivery.html">
             Delivery Service
         </tocitem>
+        <tocitem target="OncArchive.html">
+            Archive Service
+        </tocitem>
+        <tocitem target="OncRealTime.html">
+            Near Real Time Service
+        </tocitem>
+        </tocitem>
+        <tocitem target="UpdateInstruction.html">
+            How to update to latest version
+        </tocitem>   
     </tocitem>
 </toc>

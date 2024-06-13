@@ -128,7 +128,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <ul>
         <li>array of structs - one named list for each file with information on the operation outcome</li>
     </ul></p>
-<p>The API endpoint is <span class = highlighttext>/dataProductDelivery</span>.</p>
+<p>The API endpoint is <span class = "highlighttext">/dataProductDelivery</span>.</p>
 <p><b>Parameters in filter:</b> Query string parameters in the API request. Supported parameters are:</p>   
 <pre>    * dataProductCode: char array   
     * extension: char array   
@@ -198,7 +198,7 @@ result = onc.orderDataProduct(params);
 </p><p><b>Output:</b>  
     <ul><li>struct - Parsed http response</li></ul>
 </p>
-<p>The API endpoint is <span class = highlighttext>/dataProductDelivery/request</span>.</p>
+<p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/request</span>.</p>
 <p><b>Parameters in filter:</b> Query string parameters in the API request. Supported parameters are:</p>
 <pre>    * dataProductCode: char array   
     * extension: char array   
@@ -255,7 +255,7 @@ result = onc.requestDataProduct(params);
         <li>struct - information of the run process</li>
     </ul>
 </p>
-<p>The API endpoint is <span class = highlighttext>/dataProductDelivery/run</span>.</p>
+<p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/run</span>.</p>
 <p><b>Returns(struct):</b> API response. Each struct returned contains following fields:</p>   
 <pre>    * runIds: double   
     * fileCount: double   
@@ -325,7 +325,7 @@ result = onc.runDataProduct(params);
     </ul></p>
 <p><b>Output:</b>
     <ul><li>response(struct) - status of this data product</li></ul></p>
-<p>The API endpoint is <span class = highlighttext>/dataProductDelivery/status</span>.</p>
+<p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/status</span>.</p>
 <p><b>Returns(struct):</b> API response. Each struct returned contains following fields:</p>   
 <pre>    * description: char array   
     * modifyDate: char array   
@@ -356,7 +356,7 @@ response = onc.checkDataProduct(dpRequestId);
         <li>response(struct) - cancel process status and message</li>
         <li>info(struct) - cancel process http code and status</li>
     </ul></p>
-<p>The API endpoint is <span class = highlighttext>/dataProductDelivery/cancel</span>.</p>
+<p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/cancel</span>.</p>
 <p>Returns: API response. Each response(struct) returned contains following fields:</p>   
 <pre>    * dpRunId: char array   
     * status: char array</pre>
@@ -394,7 +394,7 @@ cancelResponse = onc.cancelDataProduct(dpRequestId);
     <ul>
         <li>array of structs - (one struct for each downloaded file) with information on the operation outcome</li>
     </ul>
-</p><p>The API endpoint is <span class = highlighttext>/dataProductDelivery/download</span>.</p>
+</p><p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/download</span>.</p>
 <p>Returns: API response. Each response(struct) returned contains following fields:</p>   
 <pre>    * url: char array   
     * status: char array   
@@ -433,7 +433,7 @@ downloadResult = onc.downloadDataProduct(runResult.runIds);
         <li>response(struct) - restart process status and message</li>
         <li>info(struct) - restart process http code and status</li>
     </ul>
-</p><p>The API endpoint is <span class = highlighttext>/dataProductDelivery/restart</span>.</p>
+</p><p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/restart</span>.</p>
 <p>Returns: API response. Each response(struct) returned contains following fields:</p>
 <pre>    * dpRunId: char array   
     * status: char array
