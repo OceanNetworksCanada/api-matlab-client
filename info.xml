@@ -2,9 +2,6 @@
 <productinfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="optional">
     <?xml-stylesheet type="text/xsl"href="optional"?>
-    <!-- info.xml file for the mytoolbox toolbox -->
-    <!-- Version 1.0 -->
-    <!-- Copyright (date) (owner).-->
     
     <!-- Supply the following six elements in the order specified -->
     <!-- (Required) Release of MATLAB. Not currently used but required -->
