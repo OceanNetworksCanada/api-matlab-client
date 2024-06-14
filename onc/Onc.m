@@ -1,7 +1,6 @@
 classdef Onc < onc.OncDiscovery & onc.OncDelivery & onc.OncRealTime & onc.OncArchive
     %% ONC Facilitates access to Ocean Networks Canada's data through the Oceans 3.0 API.
-    % For detailed information and usage examples, run doc command or visit MATLAB's help browser
-    % then find Ocean Networks Canada API Client under supplemental software
+    % For detailed information and usage examples, run 'doc Ocean Networks Canada API Client Toolbox' command 
     %
     % ONC Properties:
     % token    - User token, can be obtained at: https://data.oceannetworks.ca/Profile
@@ -143,7 +142,7 @@ classdef Onc < onc.OncDiscovery & onc.OncDelivery & onc.OncRealTime & onc.OncArc
             %providing the locationCodes
 
             % check if it's running the latest version. If not, throw a warning
-            util.checkVersion;
+            util.checkVersion();
             
         end
 

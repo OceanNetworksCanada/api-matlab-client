@@ -1,6 +1,5 @@
-function isLatestVersion = checkVersion()
+function checkVersion()
     url = 'https://github.com/OceanNetworksCanada/api-matlab-client/releases/latest';
-    isLatestVersion = 0;
     try
         % get latest version
         releaseInfo = webread(url);
@@ -25,8 +24,6 @@ function isLatestVersion = checkVersion()
             link = sprintf('<a href="%s">How to update this library</a>', formattedPath);
             warning(['You are using an outdated version(%s) of the library. Update to the latest version(%s) to avoid potential errors. ' ...
                 'For instructions on updating to the latest version, please visit: %s'], localVersion, latestVersion, link);
-        else
-            isLatestVersion = 1;
         end
     catch ME
         % do nothing
