@@ -2,7 +2,9 @@
 
 <toc version="2.0">
     <tocitem target="Info.html"> Ocean Networks Canada API Client Toolbox
-        <tocitem> How to use
+        
+        <tocitem target="HowToUse.html"> How to use
+        <tocitem target="GettingStarted.html"> Getting Started with this library</tocitem>
         <tocitem target="Onc.html"> Onc class
         </tocitem>
         <tocitem target="OncDiscovery.html">
@@ -18,6 +20,7 @@
             Near Real Time Service
         </tocitem>
         </tocitem>
+        <tocitem target="ExampleLinks.html"> Examples/Live Scripts</tocitem>
         <tocitem target="UpdateInstruction.html">
             How to update to latest version
         </tocitem>   

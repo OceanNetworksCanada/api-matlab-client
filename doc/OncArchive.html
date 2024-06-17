@@ -101,16 +101,16 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <div class="content">
     <h1>ONC Archive Files methods</h1>
     <h2>Contents</h2>
-    <div>
+    <p><b>To navigate directly to a specific part of the documentation (use the internal links), right-click on the section you're interested and select "Open" or "Open in New Tab".</b></p>
         <ul>
-            <li><a href="#2">ONC Archive File Service</a></li>
-            <li><a href="#3">GetListByLocation(filters, allPages)</a></li>
-            <li><a href="#4">GetListByDevice(filters, allPages)</a></li>
-            <li><a href="#5">GetFile(filename, overwrite)</a></li>
-            <li><a href="#6">GetDirectFiles(filters, allPages, overwrite)</a></li>
+            <li><a href="#section1">ONC Archive File Service</a></li>
+            <li><a href="#section2">GetListByLocation(filters, allPages)</a></li>
+            <li><a href="#section3">GetListByDevice(filters, allPages)</a></li>
+            <li><a href="#section4">GetFile(filename, overwrite)</a></li>
+            <li><a href="#section5">GetDirectFiles(filters, allPages, overwrite)1</a></li>
         </ul>
-    </div>
-<h2 id="2">ONC Archive File Service</h2>
+    
+<h2 id="section1">ONC Archive File Service</h2>
 <p>Contains the functionality that wraps API archivefile services To be inherited by the Onc class These methods allow users to directly download previously generated data product files from our archive.</p>
 <p>ONC systems auto-generate and archive files of different types at set time intervals. These archived files can be downloaded without waiting for a generation process to finish (potentially faster than Data product download methods). </p>
 <div class="highlighted">
@@ -122,7 +122,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     <p class="cautionTitle">Caution </p>
     <p>Due to security regulations, some very recent files (e.g. hydrophone.wav files in the last hour) might not be made immediately available.</p>
 </div>
-<h2 id="3">GetListByLocation(filters, allPages)</h2>
+<h2 id="section2">GetListByLocation(filters, allPages)</h2>
 <p>Get a list of files for a given location and device category filtered by other optional parameters. </p>
 <p><b>Input: </b> 
     <ul>
@@ -171,7 +171,7 @@ result = onc.getListByLocation(params);
     fileList = this.getList(filters, <span class="string">'location'</span>, allPages);
 <span class="keyword">end</span>
 </pre>
-<h2 id="5">GetListByDevice(filters, allPages)</h2>
+<h2 id="section3">GetListByDevice(filters, allPages)</h2>
 <p>Get a list of files for a given device filtered by other optional parameters. </p>
 <p><b>Input: </b> 
     <ul>
@@ -217,7 +217,7 @@ result = onc.getListByDevice(params);
     r = this.getList(filters, <span class="string">'device'</span>, allPages);
 <span class="keyword">end</span>
 </pre>
-<h2 id="7">GetFile(filename, overwrite)</h2>
+<h2 id="section4">GetFile(filename, overwrite)</h2>
 <p>Download the archive file identified by filename </p>
 <p><b>Input: </b> 
     <ul>
@@ -291,7 +291,7 @@ downloadInfo = onc.getFile(filename);</pre>
         <span class="string">'file'</span>        , <span class="string">""</span>);
 <span class="keyword">end</span>
 </pre>
-<h2 id="8">GetDirectFiles(filters, allPages, overwrite)</h2>
+<h2 id="section5">GetDirectFiles(filters, allPages, overwrite)</h2>
 <p>Downloads all archive files that match the filters Uses geListByDevice or getListByLocation to get a file list, then getFile's everything. </p>
 <p><b>Input: </b>
     <ul>
