@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding="utf-8"?>
 
 <toc version="2.0">
-    <tocitem target="Info.html"> Ocean Networks Canada API Client Toolbox
+    <tocitem target="Info.html"> ONC Toolbox
         
-        <tocitem target="HowToUse.html"> How to use
+        <tocitem target="HowToUse.html"> How to use1
         <tocitem target="GettingStarted.html"> Getting Started with this library</tocitem>
         <tocitem target="Onc.html"> Onc class
         </tocitem>
