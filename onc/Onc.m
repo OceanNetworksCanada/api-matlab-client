@@ -1,7 +1,6 @@
 classdef Onc < onc.OncDiscovery & onc.OncDelivery & onc.OncRealTime & onc.OncArchive
-    %% ONC Facilitates access to Ocean Networks Canada's data through the Oceans 2.0 API.
-    % For detailed information and usage examples, visit our official documentation
-    % at https://wiki.oceannetworks.ca/display/CLmatlab
+    %% ONC Facilitates access to Ocean Networks Canada's data through the Oceans 3.0 API.
+    % For detailed information and usage examples, run 'doc Ocean Networks Canada API Client Toolbox' command 
     %
     % ONC Properties:
     % token    - User token, can be obtained at: https://data.oceannetworks.ca/Profile
@@ -63,20 +62,33 @@ classdef Onc < onc.OncDiscovery & onc.OncDelivery & onc.OncRealTime & onc.OncArc
     end
 
     methods (Access = public)
+        %% The ONC class
+        % The ONC class provides a wrapper for Oceans 3.0 API requests. All the client library’s functionality is provided as methods of this class.
+        % Create an ONC object to access this library’s functionalities.
+        % Parameters: 
+        %   * token ([char]) - The ONC API token, which could be retrieved at https://data.oceannetworks.ca/Profile once logged in.
+        %   * production (logical, optional, default = True) - 
+        %           Whether the ONC Production server URL is used for service requests.
+        %               True: Use the production server.
+        %               False: Use the internal ONC test server (reserved for ONC staff IP addresses).
+        %   * showInfo (logical, optional, default = false) - 
+        %           Whether verbose script messages are displayed, such as request url and processing time information.
+        %               True: Print all information and debug messages (intended for debugging).
+        %               False: Only print information messages.
+        %   * outPath ([char], optional, default = 'output') - Output path for downloaded files
+        %                                                      The directory will be created if it does not exist during the download.
+        %   * timeout (int, optional, default = 60) - Number of seconds before a request to the API is canceled
+        % 
+        % Returns: The Onc object created.
+        % 
+        % Examples:
+        %   onc = ONC("YOUR_TOKEN_HERE", 'showInfo', true, 'outPath', 'myOutPath');
+        %%
         function this = Onc(token, varargin)
             %% Class initializer
             % All toolkit functionality must be invoked from an Onc object
             %
             % Onc(token, production=true, showInfo=false, outPath='output', timeout=60)
-            %
-            % * token:      ([char])  User token
-            % - production: (logical) Send requests to the production server (otherwise use internal QA)
-            % - showInfo:   (logical) Whether verbose debug messages are displayed
-            % - outPath:    ([char])  Output path for downloaded files
-            % - timeout:    (int)     Number of seconds before a request to the API is canceled
-            %
-            % Returns: The Onc object created.
-            
             % parse inputs (can be named or positional)
             p = inputParser;
             addRequired(p, 'token', @ischar);
@@ -128,7 +140,9 @@ classdef Onc < onc.OncDiscovery & onc.OncDelivery & onc.OncRealTime & onc.OncArc
             this.tree = temp.tree;
             %These codes can then be used for input to onc.getDevices by
             %providing the locationCodes
-            
+
+            % check if it's running the latest version. If not, throw a warning
+            util.checkVersion();
             
         end
 
