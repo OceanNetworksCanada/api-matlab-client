@@ -208,13 +208,13 @@ classdef MultiPage < handle
                 end    
             elseif isArchive
                 row0 = response.files(1);
+                rowEnd = response.files(end);
                 
-               
-                if isa(row0, 'char')
+                if isa(row0, 'char') || iscell(row0)
                     % extract the date from the filename
                     regExp  = '\\d{8}T\\d{6}d\\.\\d{3}Z';
-                    nameFirst = response.files(1);
-                    nameLast  = response.files(end);
+                    nameFirst = char(row0);
+                    nameLast  = char(rowEnd);
                     mFirst = regexp(nameFirst, regExp, 'once', 'match');
                     mLast  = regexp(nameLast,  regExp, 'once', 'match');
                     if isempty(mFirst) || isempty(mLast)

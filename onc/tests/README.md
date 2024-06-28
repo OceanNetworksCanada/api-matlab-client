@@ -24,20 +24,23 @@ Although each test suite inherits from matlab.unittest.TestCase, each is written
 2. Use MATLAB's command window to run all tests, using the commands described below:
 
 *Running all tests:*
+    in folder api-matlab-client, run command:
+    runtests('onc/tests/suites', 'IncludeSubfolders', true);
 
-    runAllTests
-
+(if it doesn't display test results table at the end, all tests pass. You can also remove semicolon to see test results)
+    
 *Running a test suite:*
 
-    runTestSuite <NUMBER_OF_TEST_SUITE>
+    runtests(<NUMBER_OF_TEST_SUITE>)
     i.e.:
-    runTestSuite 1
+    runtests("Test01_Locations"); 
 
 *Running a test case:*
+    
+    runtests(<NAME_OF_TEST_SUITE_CLASS>/<NAME_OF_CASE_METHOD>)
 
-    runTestCase <NAME_OF_TEST_SUITE_CLASS> <NAME_OF_CASE_METHOD>
     i.e.:
-    runTestCase Test01_Locations testGetAllLocations
+    runtests("Test01_Locations/testInvalidTimeRangeGreaterStartTime")
 
 
 **DEVELOPING TESTS**

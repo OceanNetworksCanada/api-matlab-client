@@ -1,111 +1,223 @@
 classdef Test08_RealTime < matlab.unittest.TestCase
     properties (SetAccess = private)
         onc
-        F_SCALAR1 = struct('locationCode', 'CRIP.C1', 'deviceCategoryCode', 'CTD', 'propertyCode', 'density', ...
-                           'dateFrom', '2018-03-24T00:00:00.000Z', 'dateTo', '2018-03-24T00:00:15.000Z');
-        % 3 pages of temperature, by location
-        F_SCALAR2 = struct('locationCode', 'CRIP.C1', 'deviceCategoryCode', 'CTD', 'propertyCode', 'density', ...
-                           'dateFrom', '2018-03-24T00:00:00.000Z',   'dateTo', '2018-03-24T00:00:15.000Z', 'rowLimit', 5);
-        % 3 pages of temperature
-        F_SCALAR3 = struct('deviceCode', 'BARIX001', 'dateFrom', '2017-06-08T00:00:00.000Z', 'dateTo', 'PT7M', 'rowLimit', 5);
-        F_RAW1    = struct('locationCode', 'CRIP.C1', 'deviceCategoryCode', 'CTD', ...
-                           'dateFrom', '2018-03-24T00:00:00.000Z', 'dateTo', '2018-03-24T00:00:10.000Z');
-        F_RAW3    = struct('locationCode', 'CRIP.C1', 'deviceCategoryCode', 'CTD', ...
-                           'dateFrom', '2018-03-24T00:00:00.000Z', 'dateTo', '2018-03-24T00:00:15.000Z', 'rowLimit', 5);
-        F_RAWDEV1 = struct('deviceCode', 'BARIX001', 'dateFrom', '2017-06-08T00:00:00.000Z', 'dateTo', 'PT5S');
-        F_WRONG_FILTERS = struct('locationCode', 'ONION', 'deviceCategoryCode', 'POTATO', 'propertyCode', 'BANANA', ...
-                           'dateFrom', '2018-03-24T00:00:00.000Z', 'dateTo', '2018-03-24T00:00:10.000Z');
-        F_NODATA  = struct('locationCode', 'CRIP.C1    ', 'deviceCategoryCode', 'CTD', ...
-                           'dateFrom', '2015-03-24T00:00:00.000Z', 'dateTo', '2015-03-24T00:00:10.000Z');
+        outPath = 'output';
+        paramsLocation = struct('locationCode', 'NCBC',...
+                                'deviceCategoryCode', 'BPR',...
+                                'propertyCode', 'seawatertemperature,totalpressure',...
+                                'dateFrom', '2019-11-23T00:00:00.000Z',...
+                                'dateTo', '2019-11-23T00:01:00.000Z',...
+                                'rowLimit', 80000);
+
+        paramsRawLocation = struct('locationCode', 'NCBC',...
+                                'deviceCategoryCode', 'BPR',...
+                                'dateFrom', '2019-11-23T00:00:00.000Z',...
+                                'dateTo', '2019-11-23T00:01:00.000Z',...
+                                'rowLimit', 80000, ...
+                                'sizeLimit', 20, ...
+                                'convertHexToDecimal', false);
+        
+        paramsLocationMultiPages = struct('locationCode', 'NCBC',...
+                                'deviceCategoryCode', 'BPR',...
+                                'propertyCode', 'seawatertemperature,totalpressure',...
+                                'dateFrom', '2019-11-23T00:00:00.000Z',...
+                                'dateTo', '2019-11-23T00:01:00.000Z',...
+                                'rowLimit', 25);
+
+        paramsRawLocationMultiPages = struct('locationCode', 'NCBC',...
+                                    'deviceCategoryCode', 'BPR',...
+                                    'dateFrom', '2019-11-23T00:00:00.000Z',...
+                                    'dateTo', '2019-11-23T00:01:00.000Z',...
+                                    'rowLimit', 25, ...
+                                    'sizeLimit', 20, ...
+                                    'convertHexToDecimal', false);
+
+        paramsDevice = struct('deviceCode', 'BPR-Folger-59', ...
+                                'dateFrom', '2019-11-23T00:00:00.000Z', ...
+                                'dateTo', '2019-11-23T00:01:00.000Z', ...
+                                'rowLimit', 80000);
+        
+        paramsDeviceMultiPages = struct('deviceCode', 'BPR-Folger-59', ...
+                                'dateFrom', '2019-11-23T00:00:00.000Z', ...
+                                'dateTo', '2019-11-23T00:01:00.000Z', ...
+                                'rowLimit', 25);
     end
     
     methods (TestClassSetup)
-        function prepareSuite(testCase)
-            s = rmdir('tests/output/08', 's'); % delete directory contents
+        function classSetup(this)
+            config = load_config();
+            this.onc = Onc(config.token, config.production, config.showInfo, config.outPath, config.timeout);
         end
     end
     
     methods (TestClassTeardown)
-        function cleanSuite(testCase)
-            s = rmdir('tests/output/08', 's'); % delete directory contents
-        end
-    end
-    
-    %% Public Methods
-    methods
-        % Constructor
-        function this = Test08_RealTime()
-            global config;
-            this.onc = Onc(config.token, config.production, config.showInfo, config.outPath, config.timeout);
+        function cleanSuite(this)
+            if isfolder(this.outPath)
+                rmdir(this.outPath, 's');
+            end
         end
     end
     
     %% Test methods
     methods (Test)
-        %% General test cases
+        %% Testing scalardata location
+
+        function testLocationInvalidParamValue(this)
+            filters = this.paramsLocation;
+            filters.locationCode = 'XYZ123';
+            verifyError(this, @() this.onc.getDirectByLocation(filters), 'onc:http400:error127');
+        end
         
-        function test01_scalar_by_location_1_page(this)
-            response = this.onc.getDirectByLocation(this.F_SCALAR1);
-            sensorData = response.sensorData(1);
-            verify_has_field(this, sensorData, 'data');
-            verify_field_value(this, sensorData, 'sensorCode', 'Sensor8_Voltage');
-            verify_no_next_page(this, response);
+        function testLocationInvalidParamName(this)
+            filters = this.paramsLocation;
+            filters.fakeParamName = 'NCBC';
+            verifyError(this, @() this.onc.getDirectByLocation(filters), 'onc:http400:error129');
         end
 
-        function test02_scalar_by_location_3_pages(this)
-            response = this.onc.getDirectByLocation(this.F_SCALAR2, true);
-            sensorData = response.sensorData(1);
-            verify_has_field(this, sensorData, 'data');
-            verify_field_value(this, sensorData, 'sensorCode', 'Sensor8_Voltage');
-            verifyLength(this, sensorData.data.values, 15);
-            verify_no_next_page(this, response);
+        function testLocationNoData(this)
+            filters = this.paramsLocation;
+            filters.dateFrom = '2000-01-01';
+            filters.dateTo = '2000-01-02';
+            verifyError(this, @() this.onc.getDirectByLocation(filters), 'onc:http400:error127');
         end
 
-        function test03_scalar_by_location_no_results(this)
-            response = this.onc.getDirectByLocation(this.F_NODATA);
-            verifyLength(this, response.sensorData, 0);
+        function testLocationValidParamsOnePage(this)
+            result = this.onc.getDirectByLocation(this.paramsLocation);
+            resultAllPages = this.onc.getDirectByLocation(this.paramsLocationMultiPages, 'allPages', true);
+            assertTrue(this, length(result.sensorData(1).data.values) > this.paramsLocationMultiPages.rowLimit, ...
+                        'Test should return at least `rowLimit` rows for each sensor.');
+            assertEmpty(this, result.next, 'Test should return only one page.');
+            assertEqual(this, resultAllPages.sensorData(1).data, result.sensorData(1).data, ...
+                        'Test should concatenate rows for all pages.');
+            assertEmpty(this, resultAllPages.next, 'Test should return only one page.');
+        end
+        
+        function testLocationValidParamsMultiplePages(this)
+            result = this.onc.getDirectByLocation(this.paramsLocationMultiPages);
+            assertEqual(this, length(result.sensorData(1).data.values), this.paramsLocationMultiPages.rowLimit, ...
+                        'Test should only return `rowLimit` rows for each sensor.');
+            assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
         end
 
-        function test04_scalar_by_location_wrong_filters(this)
-            result = this.onc.getDirectByLocation(this.F_WRONG_FILTERS);
-            verify_error_response(this, result);
+        %% Testing rawdata location
+        function testRawLocationInvalidParamValue(this)
+            filters = this.paramsRawLocation;
+            filters.locationCode = 'XYZ123';
+            verifyError(this, @() this.onc.getDirectRawByLocation(filters), 'onc:http400:error127');
+        end
+        
+        function testRawLocationInvalidParamName(this)
+            filters = this.paramsRawLocation;
+            filters.fakeParamName = 'NCBC';
+            verifyError(this, @() this.onc.getDirectRawByLocation(filters), 'onc:http400:error129');
         end
 
-        function test05_raw_by_location_1_page(this)
-            response = this.onc.getDirectRawByLocation(this.F_RAW1);
-            verifyLength(this, response.data.readings, 10);
-            verify_no_next_page(this, response);
+        function testRawLocationNoData(this)
+            filters = this.paramsRawLocation;
+            filters.dateFrom = '2000-01-01';
+            filters.dateTo = '2000-01-02';
+            verifyError(this, @() this.onc.getDirectRawByLocation(filters), 'onc:http400:error127');
         end
 
-        function test06_raw_by_location_3_pages(this)
-            response = this.onc.getDirectRawByLocation(this.F_RAW3, true);
-            verifyLength(this, response.data.readings, 15);
-            verify_no_next_page(this, response);
+        function testRawLocationValidParamsOnePage(this)
+            result = this.onc.getDirectRawByLocation(this.paramsRawLocation);
+            resultAllPages = this.onc.getDirectRawByLocation(this.paramsRawLocationMultiPages, 'allPages', true);
+            assertTrue(this, length(result.data.readings) > this.paramsRawLocationMultiPages.rowLimit, ...
+                        'Test should return at least `rowLimit` rows');
+            assertEmpty(this, result.next, 'Test should return only one page.');
+            assertEqual(this, resultAllPages.data, result.data, ...
+                        'Test should concatenate rows for all pages.');
+            assertEmpty(this, resultAllPages.next, 'Test should return only one page.');
+        end
+        
+        function testRawLocationValidParamsMultiplePages(this)
+            result = this.onc.getDirectRawByLocation(this.paramsRawLocationMultiPages);
+            assertEqual(this, length(result.data.readings), this.paramsRawLocationMultiPages.rowLimit, ...
+                        'Test should only return `rowLimit` rows for each sensor.');
+            assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
         end
 
-        function test07_raw_by_device_1_page(this)
-            response = this.onc.getDirectRawByDevice(this.F_RAWDEV1);
-            verifyLength(this, response.data.readings, 47);
-            verify_no_next_page(this, response);
+        %% Testing scalardata device
+
+        function testDeviceInvalidParamValue(this)
+            filters = this.paramsDevice;
+            filters.deviceCode = 'XYZ123';
+            verifyError(this, @() this.onc.getDirectByDevice(filters), 'onc:http400:error127');
         end
 
-        function test08_raw_no_results(this)
-            response = this.onc.getDirectRawByLocation(this.F_NODATA);
-            verifyLength(this, response.data.readings, 0);
+        function testDeviceInvalidParamName(this)
+            filters = this.paramsDevice;
+            filters.fakeParamName = 'BPR-Folger-59';
+            verifyError(this, @() this.onc.getDirectByDevice(filters), 'onc:http400:error129');
         end
 
-        function test09_raw_by_location_wrong_filters(this)
-            result = this.onc.getDirectRawByLocation(this.F_WRONG_FILTERS);
-            verify_error_response(this, result);
+        function testDeviceNoData(this)
+            filters = this.paramsDevice;
+            filters.dateFrom = '2000-01-01';
+            filters.dateTo = '2000-01-02';
+            result = this.onc.getDirectByDevice(filters);
+            assertEmpty(this, result.sensorData);
         end
 
-        function test10_scalar_by_device_6_pages(this)
-            response = this.onc.getDirectByDevice(this.F_SCALAR3, true);
-            sensorData = response.sensorData(1);
-            verify_has_field(this, sensorData, 'data');
-            verify_field_value(this, sensorData, 'sensorCode', 'analog_input501');
-            verifyLength(this, sensorData.data.values, 14);
-            verify_no_next_page(this, response);
+        function testDeviceValidParamsOnePage(this)
+            result = this.onc.getDirectByDevice(this.paramsDevice);
+            resultAllPages = this.onc.getDirectByDevice(this.paramsDeviceMultiPages, 'allPages', true);
+            assertTrue(this, length(result.sensorData(1).data.values) > this.paramsDeviceMultiPages.rowLimit, ...
+                        'Test should return at least `rowLimit` rows.');
+            assertEmpty(this, result.next, 'Test should return only one page.');
+            assertEqual(this, resultAllPages.sensorData(1).data, result.sensorData(1).data, ...
+                        'Test should concatenate rows for all pages.');
+            assertEmpty(this, resultAllPages.next, 'Test should return only one page.');
         end
+        
+        function testDeviceValidParamsMultiplePages(this)
+            result = this.onc.getDirectByDevice(this.paramsDeviceMultiPages);
+            assertEqual(this, length(result.sensorData(1).data.values), this.paramsDeviceMultiPages.rowLimit, ...
+                        'Test should only return `rowLimit` rows for each sensor.');
+            assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
+        end
+
+        %% Testing rawdata device
+
+        function testRawDeviceInvalidParamValue(this)
+            filters = this.paramsDevice;
+            filters.deviceCode = 'XYZ123';
+            verifyError(this, @() this.onc.getDirectRawByDevice(filters), 'onc:http400:error127');
+        end
+
+        function testRawDeviceInvalidParamName(this)
+            filters = this.paramsDevice;
+            filters.fakeParamName = 'BPR-Folger-59';
+            verifyError(this, @() this.onc.getDirectRawByDevice(filters), 'onc:http400:error129');
+        end
+
+        function testRawDeviceNoData(this)
+            filters = this.paramsDevice;
+            filters.dateFrom = '2000-01-01';
+            filters.dateTo = '2000-01-02';
+            result = this.onc.getDirectRawByDevice(filters);
+            assertEmpty(this, result.data.lineTypes);
+            assertEmpty(this, result.data.readings);
+            assertEmpty(this, result.data.times);
+        end
+
+        function testRawDeviceValidParamsOnePage(this)
+            result = this.onc.getDirectRawByDevice(this.paramsDevice);
+            resultAllPages = this.onc.getDirectRawByDevice(this.paramsDeviceMultiPages, 'allPages', true);
+            assertTrue(this, length(result.data.readings) > this.paramsDeviceMultiPages.rowLimit, ...
+                        'Test should return at least `rowLimit` rows for each sensor.');
+            assertEmpty(this, result.next, 'Test should return only one page.');
+            assertEqual(this, resultAllPages.data, result.data, ...
+                        'Test should concatenate rows for all pages.');
+            assertEmpty(this, resultAllPages.next, 'Test should return only one page.');
+        end
+        
+        function testRawDeviceValidParamsMultiplePages(this)
+            result = this.onc.getDirectRawByDevice(this.paramsDeviceMultiPages);
+            assertEqual(this, length(result.data.readings), this.paramsDeviceMultiPages.rowLimit, ...
+                        'Test should only return `rowLimit` rows for each sensor.');
+            assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
+        end
+        
     end
 end

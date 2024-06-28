@@ -1,0 +1,432 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>OncArchive</title><meta name="generator" content="MATLAB 9.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2024-05-07"><meta name="DC.source" content="OncArchive.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.0em; color:#d55000; line-height:100%; font-weight:bold; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.4em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:14px; line-height:140%; padding: 20px; }
+
+.highlighted {
+    background-color: #e7f2fa;
+    display: inline-block;
+    margin: 1px 1px 20px;
+    max-width: 800;
+}
+.titleHighlighted{
+    background-color: #6ab0de;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 5px 10px;
+}
+
+.cautionTitle{
+    background-color:  #f0b37e;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 5px 10px;
+}
+
+.caution{
+    background-color: #ffedcc;
+    display: inline-block;
+    margin: 1px 1px 20px;
+    max-width: 800;
+}
+
+.highlighttext {
+    background-color: white;
+    color: red;
+}
+
+pre, code { font-size:14px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+</style></head>
+<body>
+<div class="content">
+    <h1>ONC Archive Files methods</h1>
+    <h2>Contents</h2>
+    <p><b>To navigate directly to a specific part of the documentation (use the internal links), right-click on the section you're interested and select "Open" or "Open in New Tab".</b></p>
+        <ul>
+            <li><a href="#section1">ONC Archive File Service</a></li>
+            <li><a href="#section2">GetListByLocation(filters, allPages)</a></li>
+            <li><a href="#section3">GetListByDevice(filters, allPages)</a></li>
+            <li><a href="#section4">GetFile(filename, overwrite)</a></li>
+            <li><a href="#section5">GetDirectFiles(filters, allPages, overwrite)1</a></li>
+        </ul>
+    
+<h2 id="section1">ONC Archive File Service</h2>
+<p>Contains the functionality that wraps API archivefile services To be inherited by the Onc class These methods allow users to directly download previously generated data product files from our archive.</p>
+<p>ONC systems auto-generate and archive files of different types at set time intervals. These archived files can be downloaded without waiting for a generation process to finish (potentially faster than Data product download methods). </p>
+<div class="highlighted">
+    <p class="titleHighlighted">  Note</p>
+    <p>Archived files have a unique filename (e.g. &#8220;NAXYS_HYD_007_20091231T235919.476Z-spect.png&#8221;) that includes the device code (&#8220;NAXYS_HYD_007&#8221;) and the UTC date-time when the data in the file started being measured (&#8220;20091231T235919.476Z&#8221;). The filename might contain additional information. </p>
+</div>
+<p></p>
+<div class="caution">
+    <p class="cautionTitle">Caution </p>
+    <p>Due to security regulations, some very recent files (e.g. hydrophone.wav files in the last hour) might not be made immediately available.</p>
+</div>
+<h2 id="section2">GetListByLocation(filters, allPages)</h2>
+<p>Get a list of files for a given location and device category filtered by other optional parameters. </p>
+<p><b>Input: </b> 
+    <ul>
+        <li>filters(struct) - Describes the data origin</li>
+        <li>allPages(logical, optional, default = false) - When true, if the data requested is too large to fit a single API resquest, keep downloading data pages until we gather all data</li>
+    </ul>
+</p><p><b>Output: </b> 
+    <ul>
+        <li>array of structs - File list obtained</li>
+    </ul>
+</p>
+<p>The API endpoint is /archivefile/location.</p>
+<p>Parameters in filter: Query string parameters in the API request. Supported parameters are:   
+<pre>    * locationCode: char array 
+    * deviceCategoryCode: char array   
+    * dateFrom: char array   
+    * dateTo: char array   
+    * .....
+</pre>
+<p>Returns([struct]): API response. Each struct returned contains following fields: </p>
+<pre>    * citations: struct   
+    * files: char array   
+    * queryUrl: struct   
+    * ......
+</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/archivefile/location">https://data.oceannetworks.ca/OpenAPI#get-/archivefile/location</a> for full structure of response and all available filters.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p> 
+<pre class="codeinput">params = struct(...
+    <span class="string">'locationCode'</span>, <span class="string">'NCBC'</span>, ...
+    <span class="string">'deviceCategoryCode'</span>, <span class="string">'BPR'</span>, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2019-11-23T00:00:00.000Z'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2019-11-26T00:00:00.000Z'</span>, ...
+    <span class="string">'dateArchivedFrom'</span>, <span class="string">'2019-11-24T00:00:00.000Z'</span>, ...
+    <span class="string">'dateArchivedTo'</span>, <span class="string">'2019-11-27T00:00:00.000Z'</span>, ...
+    <span class="string">'fileExtension'</span>, <span class="string">'txt'</span>, ...
+    <span class="string">'rowLimit'</span>, 80000, ...
+    <span class="string">'page'</span>, 1 ...
+    ); 
+result = onc.getListByLocation(params);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncArchive.mlx">Onc Archive example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> fileList = getListByLocation(this, filters, varargin)
+    [allPages] = util.param(varargin, <span class="string">'allPages'</span>, false);
+    fileList = this.getList(filters, <span class="string">'location'</span>, allPages);
+<span class="keyword">end</span>
+</pre>
+<h2 id="section3">GetListByDevice(filters, allPages)</h2>
+<p>Get a list of files for a given device filtered by other optional parameters. </p>
+<p><b>Input: </b> 
+    <ul>
+        <li>filters(struct) - Describes the data origin</li>
+        <li>allPages(logical, optional, default = false) - When true, if the data requested is too large to fit a single API resquest, keep downloading data pages until we gather all data</li>
+    </ul></p>
+<p><b>Output: </b> 
+    <ul>
+        <li>array of structs - File list obtaine</li>
+    </ul></p>
+<p>The API endpoint is /archivefile/location.</p>
+<p>Parameters in filter: Query string parameters in the API request. Supported parameters are:</p>
+<pre>    * deviceCode: char array   
+    * dateFrom: char array   
+    * dateTo: char array   
+    * dateArchivedFrom: char array   
+    * dateArchivedTo: char array   
+    * .....</pre>
+<p>Returns([struct]): API response. Each struct returned contains following fields:</p>   
+<pre>    * citations: struct   
+    * files: char array   
+    * queryUrl: struct   
+    * ......</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/archivefile/location">https://data.oceannetworks.ca/OpenAPI#get-/archivefile/location</a> for full structure of response and all available filters.</p> 
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = struct(...
+    <span class="string">'deviceCode'</span>, <span class="string">'BPR-Folger-59'</span>, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2019-11-23T00:00:00.000Z'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2019-11-26T00:00:00.000Z'</span>, ...
+    <span class="string">'dateArchivedFrom'</span>, <span class="string">'2019-11-24T00:00:00.000Z'</span>, ...
+    <span class="string">'dateArchivedTo'</span>, <span class="string">'2019-11-27T00:00:00.000Z'</span>, ...
+    <span class="string">'fileExtension'</span>, <span class="string">'txt'</span>, ...
+    <span class="string">'rowLimit'</span>, 80000, ...
+    <span class="string">'page'</span>, 1 ...
+    ); 
+result = onc.getListByDevice(params);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncArchive.mlx">Onc Archive example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getListByDevice(this, filters, varargin)
+    [allPages] = util.param(varargin, <span class="string">'allPages'</span>, false);
+    r = this.getList(filters, <span class="string">'device'</span>, allPages);
+<span class="keyword">end</span>
+</pre>
+<h2 id="section4">GetFile(filename, overwrite)</h2>
+<p>Download the archive file identified by filename </p>
+<p><b>Input: </b> 
+    <ul>
+        <li>filename(char array) - Archive file filename</li>
+        <li>overwrite(logical, optional) - When true, downloaded files will overwrite any file with the same filename, otherwise(default) file will be skipped</li>
+    </ul></p>
+<p><b>Output: </b>  
+    <ul>
+        <li>struct - Information on the download result</li>
+    </ul></p>
+<p>The API endpoint is /archivefile/download.</p>
+<p>Returns(struct): API response. Each struct returned contains following fields:   </p>
+<pre>    * url: char array   
+    * status: char array   
+    * file: char array   
+    * ......
+</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/archivefile/download">https://data.oceannetworks.ca/OpenAPI#get-/archivefile/download</a> for full structure of response and all available filters.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information.</p>
+<p><b>Example:</b></p> 
+<pre class="codeinput">filename = 'BPR-Folger-59_20191123T000000.000Z.txt'; 
+downloadInfo = onc.getFile(filename);</pre>
+<p> For more examples, see <a href="../../../examples/OncArchive.mlx">Onc Archive example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> fileInfo = getFile(this, filename, varargin)
+    <span class="keyword">if</span> ~exist(<span class="string">'filename'</span>, <span class="string">'var'</span>)
+        filename = <span class="string">''</span>;
+    <span class="keyword">end</span>
+    [overwrite, showMsg] = util.param(varargin, <span class="string">'overwrite'</span>, false, <span class="string">'showMsg'</span>, true);
+
+    url = this.serviceUrl(<span class="string">'archivefiles'</span>);
+    filters = struct(<span class="string">'token'</span>, this.token,<span class="string">'method'</span>, <span class="string">'getFile'</span>, <span class="string">'filename'</span>, filename);
+
+    <span class="keyword">if</span> showMsg, fprintf(<span class="string">'Downloading file "%s"...\n'</span>, filename); <span class="keyword">end</span>
+
+    [response, info] = <span class="keyword">...</span>
+    util.do_request(url, filters, <span class="string">'timeout'</span>, this.timeout, <span class="string">'showInfo'</span>, this.showInfo, <span class="keyword">...</span>
+                <span class="string">'showProgress'</span>, true);
+
+    <span class="keyword">if</span> not(info.status == 200)
+        fileInfo = response;
+        <span class="keyword">return</span>;
+    <span class="keyword">end</span>
+
+    outPath    = this.outPath;
+    saveStatus = util.save_as_file(response, outPath, filename, overwrite);
+
+    txtStatus  = <span class="string">'error'</span>;
+    <span class="keyword">if</span> info.status == 200
+        <span class="keyword">if</span> saveStatus == 0
+            txtStatus = <span class="string">'completed'</span>;
+            <span class="keyword">if</span> showMsg, fprintf(<span class="string">'   File was downloaded to "%s"\n'</span>, filename); <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        fullUrl = this.getDownloadUrl(filename);
+        fileInfo = struct(             <span class="keyword">...</span>
+            <span class="string">'url'</span>         , fullUrl,   <span class="keyword">...</span>
+            <span class="string">'status'</span>      , txtStatus, <span class="keyword">...</span>
+            <span class="string">'size'</span>        , info.size, <span class="keyword">...</span>
+            <span class="string">'downloadTime'</span>, round(info.duration, 3), <span class="keyword">...</span>
+            <span class="string">'file'</span>        , filename);
+
+        <span class="keyword">return</span>;
+    <span class="keyword">end</span>
+
+    fileInfo = struct( <span class="keyword">...</span>
+        <span class="string">'url'</span>         , <span class="string">""</span>,        <span class="keyword">...</span>
+        <span class="string">'status'</span>      , txtStatus, <span class="keyword">...</span>
+        <span class="string">'size'</span>        , 0,         <span class="keyword">...</span>
+        <span class="string">'downloadTime'</span>, 0,         <span class="keyword">...</span>
+        <span class="string">'file'</span>        , <span class="string">""</span>);
+<span class="keyword">end</span>
+</pre>
+<h2 id="section5">GetDirectFiles(filters, allPages, overwrite)</h2>
+<p>Downloads all archive files that match the filters Uses geListByDevice or getListByLocation to get a file list, then getFile's everything. </p>
+<p><b>Input: </b>
+    <ul>
+        <li>filters(struct) - Describes the data origin</li>
+        <li>allPages(logical, optional, default = false) - When true, if the data requested is too large to fit a single API resquest, keep downloading data pages until we gather all data</li>
+        <li>overwrite(logical, optional) - When true, downloaded files will overwrite any file with the same filename, otherwise(default) file will be skipped</li>
+    </ul></p>
+<p><b>Output:</b>
+    <ul>
+        <li>struct - Information on the results of the operation, with 'downloadResults' for each file downloaded and general 'stats</li>
+    </ul></p>
+<p>Parameters in filter: Query string parameters in the API request. Supported parameters are:  </p>
+<pre>    * locationCode: char array   
+    * deviceCode: char array   
+    * dateFrom: char array   
+    * dateTo: char array   
+    * dateArchivedFrom: char array   
+    * dateArchivedTo: char array   
+    * .....
+</pre>
+<p>Returns(struct): API response.   </p>
+<pre>    * downloadResults: struct array. Each struct in the array contains following fields: 
+        * url: char array
+        * status: char array
+        * file: char array
+        * ......
+    * stats: struct
+        * totalSize: double       
+        * fileCount: double       
+        * downloadTime: double
+</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/archivefile/location">https://data.oceannetworks.ca/OpenAPI#get-/archivefile/location</a> and <a href="https://data.oceannetworks.ca/OpenAPI#get-/archivefile/device">https://data.oceannetworks.ca/OpenAPI#get-/archivefile/device</a> all available filters and <a href="https://data.oceannetworks.ca/OpenAPI#get-/archivefile/download">https://data.oceannetworks.ca/OpenAPI#get-/archivefile/download</a> for full structure of response.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information.</p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = struct(...
+    <span class="string">'deviceCode'</span>, <span class="string">'BPR-Folger-59'</span>, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2019-11-23T00:00:00.000Z'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2019-11-26T00:00:00.000Z'</span>, ...
+    <span class="string">'dateArchivedFrom'</span>, <span class="string">'2019-11-24T00:00:00.000Z'</span>, ...
+    <span class="string">'dateArchivedTo'</span>, <span class="string">'2019-11-27T00:00:00.000Z'</span>, ...
+    <span class="string">'fileExtension'</span>, <span class="string">'txt'</span>, ...
+    <span class="string">'rowLimit'</span>, 80000, ...
+    <span class="string">'page'</span>, 1 ...
+    ); 
+results = onc.getDirectFiles(params);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncArchive.mlx">Onc Archive example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> results = getDirectFiles(this, filters, varargin)
+    [overwrite, allPages] = util.param(varargin, <span class="string">'overwrite'</span>, false, <span class="string">'allPages'</span>, false);
+
+    <span class="comment">% Sanitize filters</span>
+    filters = util.sanitize_filters(filters);
+
+    <span class="comment">% make sure we only get a simple list of files</span>
+    <span class="keyword">if</span> isfield(filters, <span class="string">'returnOptions'</span>)
+        filters = rmfield(filters, <span class="string">'returnOptions'</span>);
+    <span class="keyword">end</span>
+
+    <span class="comment">% Get a list of files</span>
+    <span class="keyword">if</span> isfield(filters, <span class="string">'locationCode'</span>) &amp;&amp; isfield(filters, <span class="string">'deviceCategoryCode'</span>)
+        dataRows = this.getListByLocation(filters, allPages);
+    <span class="keyword">elseif</span> isfield(filters, <span class="string">'deviceCode'</span>)
+        dataRows = this.getListByDevice(filters, allPages);
+    <span class="keyword">else</span>
+        msg = <span class="string">'ERROR: getDirectFiles filters require either a combination of (locationCode)'</span>;
+        msg = [msg <span class="string">' and (deviceCategoryCode), or a (deviceCode) present.'</span>];
+        error(<span class="string">'Archive:InvalidFilters'</span>, msg);
+    <span class="keyword">end</span>
+
+    n = length(dataRows.files);
+    fprintf(<span class="string">'Obtained a list of %d files to download.\n'</span>, n);
+
+    <span class="comment">% Download the files obtained</span>
+    tries = 1;
+    successes = 0;
+    size = 0;
+    time = 0;
+    downInfos = [];
+    <span class="keyword">for</span> i = 1 : numel(dataRows.files)
+        firstCell = dataRows.files(i);
+        filename  = firstCell{1};
+
+        <span class="comment">% only download if file doesn't exist (or overwrite is True)</span>
+        outPath  = this.outPath;
+        filePath = sprintf(<span class="string">'%s/%s'</span>, outPath, filename);
+        fileExists = isfile(filePath);
+
+        <span class="keyword">if</span> not(fileExists) || (fileExists &amp;&amp; overwrite)
+            fprintf(<span class="string">'   (%d of %d) Downloading file: "%s"\n'</span>, tries, n, filename);
+            downInfo = this.getFile(filename, overwrite, <span class="string">'showMsg'</span>, false);
+
+            <span class="comment">% Skip this file if the request failed</span>
+            <span class="keyword">if</span> util.is_failed_response(downInfo)
+                fprintf(<span class="string">'   Skipping "%s" due to an error.\n'</span>, filename);
+                tries = tries + 1;
+                errorInfo = struct( <span class="keyword">...</span>
+                    <span class="string">'url'</span>         , this.getDownloadUrl(filename), <span class="keyword">...</span>
+                    <span class="string">'status'</span>      , <span class="string">'error'</span>, <span class="keyword">...</span>
+                    <span class="string">'size'</span>        , 0,       <span class="keyword">...</span>
+                    <span class="string">'downloadTime'</span>, 0,       <span class="keyword">...</span>
+                    <span class="string">'file'</span>        , <span class="string">""</span>);
+                downInfos = [downInfos, errorInfo];
+                <span class="keyword">continue</span>;
+            <span class="keyword">end</span>
+
+            size  = size + downInfo.size;
+            time  = time + downInfo.downloadTime;
+            tries = tries + 1;
+
+            <span class="keyword">if</span> strcmp(downInfo.status, <span class="string">'completed'</span>)
+                successes = successes + 1;
+            <span class="keyword">end</span>
+            downInfos = [downInfos, downInfo];
+        <span class="keyword">else</span>
+            fprintf(<span class="string">'   Skipping "%s": File already exists.\n'</span>, filename);
+            downInfo = struct( <span class="keyword">...</span>
+                <span class="string">'url'</span>         , getDownloadUrl(this, filename), <span class="keyword">...</span>
+                <span class="string">'status'</span>      , <span class="string">'skipped'</span>, <span class="keyword">...</span>
+                <span class="string">'size'</span>        , 0,         <span class="keyword">...</span>
+                <span class="string">'downloadTime'</span>, 0,         <span class="keyword">...</span>
+                <span class="string">'file'</span>        , filename);
+            downInfos = [downInfos, downInfo];
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    fprintf(<span class="string">'%d files (%s) downloaded\n'</span>, successes, util.format_size(size));
+    fprintf(<span class="string">'Total Download Time: %s\n'</span>, util.format_duration(time));
+
+    results = struct( <span class="keyword">...</span>
+        <span class="string">'downloadResults'</span>, downInfos, <span class="keyword">...</span>
+        <span class="string">'stats'</span>, struct(              <span class="keyword">...</span>
+            <span class="string">'totalSize'</span>   , size,     <span class="keyword">...</span>
+            <span class="string">'downloadTime'</span>, time,     <span class="keyword">...</span>
+            <span class="string">'fileCount'</span>   , successes));
+<span class="keyword">end</span>
+</pre>
+<p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022b</a><br></p></div></body></html>

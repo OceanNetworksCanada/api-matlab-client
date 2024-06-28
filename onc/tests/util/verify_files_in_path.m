@@ -1,5 +1,5 @@
 % verifies that path has exactly n files
-function verify_files_in_path(obj, path, n)
+function verify_files_in_path(obj, path, n, msg)
     files = dir(sprintf('%s/*.*', path));
     
     % remove . and ..
@@ -9,6 +9,9 @@ function verify_files_in_path(obj, path, n)
             count = count + 1;
         end
     end
-    
-    verifyEqual(obj, count, n);
+    if exist('msg', 'var')
+        verifyEqual(obj, count, n, msg);
+    else
+        verifyEqual(obj, count, n);
+    end
 end
