@@ -1,0 +1,466 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>OncDelivery</title><meta name="generator" content="MATLAB 9.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2024-05-06"><meta name="DC.source" content="OncDelivery.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.0em; color:#d55000; line-height:100%; font-weight:bold; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.4em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:14px; line-height:140%; padding: 20px; }
+
+.highlighted {
+    background-color: #e7f2fa;
+    display: inline-block;
+    margin: 1px 1px 20px;
+}
+.titleHighlighted{
+    background-color: #6ab0de;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 5px 10px;
+}
+
+.highlighttext {
+    background-color: white;
+    color: red;
+}
+
+pre, code { font-size:14px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head>
+  <body>
+    
+    <div class="content"><h1>ONC Delivery methods</h1><h2 id="section1">Contents</h2>
+        <p><b>To navigate directly to a specific part of the documentation (use the internal links), right-click on the section you're interested and select "Open" or "Open in New Tab".</b></p>
+        <div>
+            <ul>
+                <li><a href="#section2">ONC Delivery Service</a></li>
+                <li><a href="#section3">OrderDataProduct(filters, maxRetries, downloadResultsOnly, ...)</a></li>
+                <li><a href="#section4">RequestDataProducts(filters, maxRetries, ...)</a></li>
+                <li><a href="#section5">RunDataProduct(dpRequestId, waitComplete)</a></li>
+                <li><a href="#section6">CheckDataProduct(dpRequestId)</a></li>
+                <li><a href="#section7">CancelDataProduct(dpRequestId)</a></li>
+                <li><a href="#section8">DownloadDataProduct(runId, maxRetries, downloadResultsOnly, ...)</a></li>
+                <li><a href="#section9">RestartDataProduct(dpRequestId, waitComplete)</a></li>
+            </ul>
+        </div>
+
+</pre><h2 id="section2">ONC Delivery Service</h2>
+<p>Functionality that wraps the API data product delivery services. To be inherited by the Onc class Data product download methods allow you to request and download more than 120 different types of ONC data products, with granular control over what data to obtain, from where, and in what time frame. They are comparable to the download functionality from ONC&#8217;s Data Search tool. Examples of usage include:</p>
+<div>
+    <ul>
+        <li>Downloading PNG plots of sensor readings in a device</li>
+        <li>Downloading sensor readings as .mat files, text files, or in commercial manufacturer formats</li>
+        <li>Downloading compressed or raw audio files from hydrophones</li>
+    </ul>
+</div>
+<div class="highlighted">
+    <p class="titleHighlighted">Note</p>
+    <p>If the data product requested doesn&#8217;t exist in our archive, it will be generated by our servers before your download starts.</p>
+</div>
+<h2 id="section3">OrderDataProduct(filters, maxRetries, downloadResultsOnly, ...)</h2>
+<p>Request, run and download a data product as described by the filters</p>
+<p><b>Input:  </b>
+    <ul>
+        <li>filters(struct) - Describes the data origin</li>
+        <li>maxRetries(int, optional) - Total maximum number of request calls allowed, default 0 for no limit</li>
+        <li>downloadResultsOnly(logical, optional) - When true, files are not downloaded. By default(false) generated files are downloaded</li>
+        <li>metadata(logical, optional) - When true(default), a metadata file is downloaded. Otherwise it is skipped</li>
+        <li>overwrite(logical, optional) - When true downloaded files will overwrite any file with the same filename, otherwise(default) they will be skipped</li>
+    </ul></p>
+<p><b>Output: </b> 
+    <ul>
+        <li>array of structs - one named list for each file with information on the operation outcome</li>
+    </ul></p>
+<p>The API endpoint is <span class = "highlighttext">/dataProductDelivery</span>.</p>
+<p><b>Parameters in filter:</b> Query string parameters in the API request. Supported parameters are:</p>   
+<pre>    * dataProductCode: char array   
+    * extension: char array   
+    * dateFrom: char array   
+    * dateTo: char array   
+    * .....
+</pre>
+<p><b>Returns(struct):</b> API response. Each struct returned contains following fields:</p>   
+<pre>    * dpRequestId: double
+    * estimatedFileSize: char array
+    * ......
+</pre>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information.</p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = struct(...
+    <span class="string">'locationCode'</span>, <span class="string">'SEVIP'</span>, ...
+    <span class="string">'deviceCategoryCode'</span>, <span class="string">'CTD'</span>, ...
+    <span class="string">'dataProductCode'</span>, <span class="string">'TSSP'</span>, ...
+    <span class="string">'extension'</span>, <span class="string">'png'</span>, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2019-06-20T00:00:00.000Z'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2019-06-21T00:00:00.000Z'</span>, ...
+    <span class="string">'dpo_qualityControl'</span>, <span class="string">'1'</span>, ...
+    <span class="string">'dpo_resample'</span>, <span class="string">'none'</span> ...
+    ); 
+result = onc.orderDataProduct(params);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncDeliveryDataProducts.mlx">Onc Delivery example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> [r, status] = orderDataProduct(this, filters, varargin)
+    [maxRetries, downloadResultsOnly, metadata, overwrite] = util.param(varargin, <span class="keyword">...</span>
+    <span class="string">'maxRetries'</span>, 0, <span class="string">'downloadResultsOnly'</span>, false, <span class="string">'includeMetadataFile'</span>, true, <span class="string">'overwrite'</span>, false);
+    fileList = [];
+    <span class="comment">% Request the product</span>
+    [rqData, ~] = this.requestDataProduct(filters);
+    
+    <span class="comment">% Run the product request</span>
+    [runData, status] = this.runDataProduct(rqData.dpRequestId);
+    <span class="keyword">if</span> downloadResultsOnly
+        <span class="comment">% Only run and return links</span>
+        <span class="keyword">for</span> i = 1 : numel(runData.runIds)
+            runId = runData.runIds(i);
+            fileList = [fileList, this.infoForProductFiles(runId, runData.fileCount, metadata)];
+        <span class="keyword">end</span>
+    <span class="keyword">else</span>
+        <span class="comment">% Run and download files</span>
+        <span class="keyword">for</span> i = 1 : numel(runData.runIds)
+            runId = runData.runIds(i);
+            fileList = [fileList, this.downloadProductFiles(runId, metadata, maxRetries, overwrite)];
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    fprintf(<span class="string">'\n'</span>);
+    this.printProductOrderStats(fileList, runData);
+    r = this.formatResult(fileList, runData);
+<span class="keyword">end</span>
+</pre>
+<h2 id="section4">RequestDataProducts(filters, maxRetries, ...)</h2>
+<p>Request a data product generation described by the filters</p>
+<p><b>Input:  </b>  
+    <ul>
+        <li>filters(struct) - Describes the data origin</li>
+        <li>maxRetries(int, optional) - Total maximum number of request calls allowed, default 0 for no limit.</li>
+        <li>downloadResultsOnly(logical, optional) - When true, files are not downloaded. By default(false) generated files are downloaded</li>
+        <li>metadata(logical, optional) - When true(default), a metadata file is downloaded. Otherwise it is skipped</li>
+        <li>overwrite(logical, optional) - When true downloaded files will overwrite any file with the same filename, otherwise(default) they will be skipped</li>
+    </ul>
+</p><p><b>Output:</b>  
+    <ul><li>struct - Parsed http response</li></ul>
+</p>
+<p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/request</span>.</p>
+<p><b>Parameters in filter:</b> Query string parameters in the API request. Supported parameters are:</p>
+<pre>    * dataProductCode: char array   
+    * extension: char array   
+    * dateFrom: char array   
+    * dateTo: char array   
+    * deviceCode: char array   
+    * .....
+</pre>
+<p><b>Returns(struct):</b> API response. Each struct returned contains following fields:</p>
+<pre>    * dpRequestId: double   
+    * estimatedFileSize: char array   
+    * messages: cell array   
+    * ...... 
+</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/request">https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/request</a> for full structure of response and all available filters.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information.</p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = struct(...
+    <span class="string">'dataProductCode'</span>, <span class="string">'TSSD'</span>, ...
+    <span class="string">'extension'</span>, <span class="string">'csv'</span>, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2019-11-23T00:00:00.000Z'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2019-11-24T00:00:00.000Z'</span>, ...
+    <span class="string">'deviceCode'</span>, <span class="string">'BPR-Folger-59'</span>, ...
+    <span class="string">'dpo_minMaxAvg'</span>, 60, ...
+    <span class="string">'dpo_resample'</span>, <span class="string">'minMaxAvg'</span> ...
+    ); 
+result = onc.requestDataProduct(params);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncDeliveryDataProducts.mlx">Onc Delivery example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> [r, status] = requestDataProduct(this, filters)
+    filters = util.sanitize_filters(filters);
+    filters.method = <span class="string">'request'</span>;
+    filters.token  = this.token;
+
+    url = sprintf(<span class="string">'%sapi/dataProductDelivery'</span>, this.baseUrl);
+    fprintf(<span class="string">'Requesting data product...\n'</span>);
+    [r, info] = this.doRequest(url, filters);
+    status = info.status;
+    this.estimatePollPeriod(r);
+    this.printProductRequest(r);
+<span class="keyword">end</span>
+</pre>
+<h2 id="section5">RunDataProduct(dpRequestId, waitComplete)</h2>
+<p>Run a data product generation request</p>
+<p><b>Input:  </b>  
+    <ul>
+        <li>dpRequestId(int) - Request id obtained by requestDataProduct()</li>
+        <li>waitComplete(int, optional) - wait until dp finish when set to true (default)</li>
+    </ul>
+</p>
+<p><b>Output:</b>  
+    <ul>
+        <li>struct - information of the run process</li>
+    </ul>
+</p>
+<p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/run</span>.</p>
+<p><b>Returns(struct):</b> API response. Each struct returned contains following fields:</p>   
+<pre>    * runIds: double   
+    * fileCount: double   
+    * runTime: double   
+    * ......
+</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/run">https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/run</a> for full structure of response and all available filters.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p>
+<pre class="codeinput">
+result = onc.runDataProduct(params);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncDeliveryDataProducts.mlx">Onc Delivery example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> [r, status] = runDataProduct(this, dpRequestId, waitComplete)
+    <span class="keyword">if</span> ~exist(<span class="string">'waitComplete'</span>,<span class="string">'var'</span>), waitComplete = true; <span class="keyword">end</span>
+    url = sprintf(<span class="string">'%sapi/dataProductDelivery'</span>, this.baseUrl);
+    log = onc.DPLogger();
+
+    r = struct(<span class="string">'runIds'</span>, [], <span class="string">'fileCount'</span>, 0, <span class="string">'runTime'</span>, 0, <span class="string">'requestCount'</span>, 0);
+    filters = struct(<span class="string">'method'</span>, <span class="string">'run'</span>, <span class="string">'token'</span>, this.token, <span class="string">'dpRequestId'</span>, dpRequestId);
+
+    <span class="comment">% run timed run request</span>
+    tic
+    cancelUrl = url + <span class="string">"?method=cancel&amp;token="</span>+string(this.token)+<span class="string">"&amp;dpRequestId="</span> + string(dpRequestId);
+    <span class="keyword">if</span> waitComplete
+        fprintf(<span class="string">'\nTo cancel this data product, visit url:\n   %s\n'</span>, cancelUrl);
+    <span class="keyword">else</span>
+        fprintf(<span class="string">'\nTo cancel this data product, please execute command ''onc.cancelDataProduct(%d)''\n'</span>, dpRequestId)
+    <span class="keyword">end</span>
+    flag = <span class="string">'queued'</span>;
+    <span class="keyword">while</span> ~strcmp(flag,<span class="string">'complete'</span>) &amp;&amp; ~strcmp(flag,<span class="string">'cancelled'</span>)
+        [response, info] = this.doRequest(url, filters);
+        status = info.status;
+        r.requestCount = r.requestCount + 1;
+
+        <span class="comment">% repeat only if waitComplete</span>
+        <span class="keyword">if</span> waitComplete
+            log.printResponse(response);
+            <span class="keyword">if</span> status == 202
+                pause(this.pollPeriod);
+            <span class="keyword">end</span>
+        <span class="keyword">else</span>
+            <span class="keyword">break</span>;
+        <span class="keyword">end</span>
+        flag = response.status;
+    <span class="keyword">end</span>
+    duration = toc;
+    fprintf(<span class="string">'\n'</span>)
+
+    <span class="comment">% prepare response</span>
+    r.fileCount = response(1).fileCount;
+    r.runTime   = round(duration, 3);
+
+    <span class="comment">% gather a list of runIds</span>
+    <span class="keyword">for</span> i = 1 : numel(response)
+        run = response(i);
+        r.runIds = [r.runIds, run.dpRunId];
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<h2 id="section6">CheckDataProduct(dpRequestId)</h2>
+<p>Check the status of a data product</p>
+<p><b>Input:  </b>  
+    <ul>
+        <li>dpRequestId(int) - Request id obtained by requestDataProduct()</li>
+    </ul></p>
+<p><b>Output:</b>
+    <ul><li>response(struct) - status of this data product</li></ul></p>
+<p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/status</span>.</p>
+<p><b>Returns(struct):</b> API response. Each struct returned contains following fields:</p>   
+<pre>    * description: char array   
+    * modifyDate: char array   
+    * status: char array   
+    * ......
+</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/status">https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/status</a> for full structure of response and all available filters.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p>
+<pre class="codeinput">
+response = onc.checkDataProduct(dpRequestId);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncDeliveryDataProducts.mlx">Onc Delivery example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> response = checkDataProduct(this, dpRequestId)
+    url = sprintf(<span class="string">'%sapi/dataProductDelivery'</span>, this.baseUrl);
+    filters = struct(<span class="string">'method'</span>, <span class="string">'status'</span>, <span class="string">'token'</span>, this.token, <span class="string">'dpRequestId'</span>, dpRequestId);
+    response = this.doRequest(url, filters);
+<span class="keyword">end</span>
+</pre><h2 id="section7">CancelDataProduct(dpRequestId)</h2>
+<p>Cancel a running data product</p>
+<p><b>Input:  </b>  
+    <ul>
+        <li>dpRequestId(int) - Request id obtained by requestDataProduct()</li>
+    </ul></p>
+<p><b>Output:</b>  
+    <ul>
+        <li>response(struct) - cancel process status and message</li>
+        <li>info(struct) - cancel process http code and status</li>
+    </ul></p>
+<p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/cancel</span>.</p>
+<p>Returns: API response. Each response(struct) returned contains following fields:</p>   
+<pre>    * dpRunId: char array   
+    * status: char array</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/cancel">https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/cancel</a> for full structure of response and all available filters.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information.</p>
+<p><b>Example:</b></p>
+<pre class="codeinput">
+cancelResponse = onc.cancelDataProduct(dpRequestId);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncDeliveryDataProducts.mlx">Onc Delivery example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> [response, info] = cancelDataProduct(this, dpRequestId)
+    url = sprintf(<span class="string">'%sapi/dataProductDelivery'</span>, this.baseUrl);
+    filters = struct(<span class="string">'method'</span>, <span class="string">'cancel'</span>, <span class="string">'token'</span>, this.token, <span class="string">'dpRequestId'</span>, dpRequestId);
+    [response, info] = this.doRequest(url, filters);
+    <span class="keyword">if</span> isfield(response, <span class="string">'status'</span>) &amp;&amp; strcmp(response.status, <span class="string">'cancelled'</span>) &amp;&amp; info.status == 200
+        fprintf(<span class="string">"The data product with request id %d and run id %d has been successfully cancelled.\n"</span>, dpRequestId, response.dpRunId);
+    <span class="keyword">else</span>
+        fprintf(<span class="string">"Failed to cancel the data Product.\n"</span>);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<h2 id="section8">DownloadDataProduct(runId, maxRetries, downloadResultsOnly, ...)</h2>
+<p>Download a data product manually with a runId. Can optionally return just the download links</p>
+<p><b>Input:  </b>  
+    <ul>
+        <li>dpRunId(int) - Run id obtained by runDataProduct()</li>
+        <li>maxRetries(int, optional) - Maximum number of API requests allowed, 0(default) for no limit</li>
+        <li>downloadResultsOnly(logical, optional) When true, files are not downloaded. By default (false) generated files are downloaded</li>
+        <li>includeMetadataFile(logical, optional) When true(Default), a metadata file is downloaded. Otherwise it is skipped</li>
+        <li>overwrite(logical, optional) When true downloaded files will overwrite any file with the same filename, otherwise(default) they will be skipped</li>
+    </ul>
+</p>
+<p><b>Output:</b>  
+    <ul>
+        <li>array of structs - (one struct for each downloaded file) with information on the operation outcome</li>
+    </ul>
+</p><p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/download</span>.</p>
+<p>Returns: API response. Each response(struct) returned contains following fields:</p>   
+<pre>    * url: char array   
+    * status: char array   
+    * statusCode: integer   
+    * file: char array   
+    * downloaded: logical   
+    * ...... 
+</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/download">https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/download</a> for full structure of response and all available filters.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information.</p>
+<p><b>Example:</b></p>
+<pre class="codeinput">
+downloadResult = onc.downloadDataProduct(runResult.runIds);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncDeliveryDataProducts.mlx">Onc Delivery example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> fileData = downloadDataProduct(this, runId, varargin)
+    [maxRetries, downloadResultsOnly, metadata, overwrite] = util.param(varargin, <span class="keyword">...</span>
+        <span class="string">'maxRetries'</span>, 0, <span class="string">'downloadResultsOnly'</span>, false, <span class="string">'includeMetadataFile'</span>, true, <span class="string">'overwrite'</span>, false);
+
+    <span class="keyword">if</span> downloadResultsOnly
+        fileData = this.infoForProductFiles(runId, 0, metadata);
+    <span class="keyword">else</span>
+        fileData = this.downloadProductFiles(runId, metadata, maxRetries, overwrite);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2 id="section9">RestartDataProduct(dpRequestId, waitComplete)</h2>
+<p>Restart a cancelled data product</p>
+<p><b>Input:  </b>  
+    <ul>
+        <li>dpRequestId(int) - Request id obtained by requestDataProduct()</li>
+        <li>waitComplete(logical, optional) - Wait until dp finish when set to true (default)</li>
+    </ul></p>
+<p><b>Output:</b>  
+    <ul>
+        <li>response(struct) - restart process status and message</li>
+        <li>info(struct) - restart process http code and status</li>
+    </ul>
+</p><p>The API endpoint is <span class = "highlighttext">/dataProductDelivery/restart</span>.</p>
+<p>Returns: API response. Each response(struct) returned contains following fields:</p>
+<pre>    * dpRunId: char array   
+    * status: char array
+</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/restart">https://data.oceannetworks.ca/OpenAPI#get-/dataProductDelivery/restart</a> for full structure of response and all available filters.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p>
+<pre class="codeinput">
+restartResult = onc.restartDataProduct(runResult.runIds);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncDeliveryDataProducts.mlx">Onc Delivery example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> [response, info] = restartDataProduct(this, dpRequestId, waitComplete)
+    <span class="keyword">if</span> ~exist(<span class="string">'waitComplete'</span>,<span class="string">'var'</span>), waitComplete = true; <span class="keyword">end</span>
+    url = sprintf(<span class="string">'%sapi/dataProductDelivery'</span>, this.baseUrl);
+    filters = struct(<span class="string">'method'</span>, <span class="string">'restart'</span>, <span class="string">'token'</span>, this.token, <span class="string">'dpRequestId'</span>, dpRequestId);
+    [response, info] = this.doRequest(url, filters);
+    <span class="keyword">if</span> isfield(response, <span class="string">'status'</span>) &amp;&amp; (strcmp(response.status, <span class="string">'data product running'</span>) || strcmp(response.status, <span class="string">'queued'</span>)) &amp;&amp; info.status == 200
+        fprintf(<span class="string">"The data product with request id %d and run id %d has been successfully restarted.\n"</span>, dpRequestId, response.dpRunId);
+    <span class="keyword">else</span>
+        fprintf(<span class="string">"Failed to restart the data product.\n"</span>);
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> waitComplete
+        [response, info] = this.runDataProduct(dpRequestId, true);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre>
+<p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022b</a><br></p></div>
+</body></html>

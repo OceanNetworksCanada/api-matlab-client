@@ -1,0 +1,459 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>OncDiscovery</title>
+      <meta name="generator" content="MATLAB 9.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2024-05-01"><meta name="DC.source" content="OncDiscovery.m">
+      <style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.0em; color:#d55000; line-height:100%; font-weight:bold; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.4em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; } 
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px;  margin:0px 0px 7px 23px;}
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:14px; line-height:140%; padding: 20px; }
+
+.highlighted {
+    background-color: #e7f2fa;
+    display: inline-block;
+    margin: 1px 1px 20px;
+}
+
+.titleHighlighted{
+    background-color: #6ab0de;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 5px 10px;
+}
+
+.highlighttext {
+    background-color: white;
+    color: red;
+}
+
+pre, code { font-size:14px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+</style>
+</head>
+<body>
+<div class="content"><h1>ONC Discovery methods</h1><h2 id = "1">Contents</h2>
+    <p><b>To navigate directly to a specific part of the documentation (use the internal links), right-click on the section you're interested and select "Open" or "Open in New Tab".</b></p>
+    <div>
+        <ul>
+            <li><a href="#2">ONC Discovery methods</a></li>
+            <li><a href="#3">GetLocations(filters)</a></li>
+            <li><a href="#4">GetLocationHierarchy(filters)</a></li>
+            <li><a href="#5">GetDeployments(filters)</a></li>
+            <li><a href="#6">GetDevices(filters)</a></li>
+            <li><a href="#7">GetDeviceCategories(filters)</a></li>
+            <li><a href="#8">GetProperties(filters)</a></li>
+            <li><a href="#9">GetDataProducts(filters)</a></li>
+        </ul>
+    </div>
+
+<h2 id="2">ONC Discovery methods</h2>
+<p>Contains the functionality that wraps the API discovery services To be inherited by the Onc class Discovery methods can be used to search for available locations, deployments, device categories, devices, properties, and data products. They support numerous filters and might resemble an "advanced search&#8221; function for ONC data sources.</p>
+<p><b>Use discovery methods to:</b></p>
+<div>
+    <ul>
+        <li>Obtain the identification codes required to use other API services.</li>
+        <li>Obtain the identification codes required to use other API services.</li>
+        <li>Explore what's available in a certain location or device.</li>
+        <li>Obtain the deployment dates for a device.</li>
+        <li>List available data products for download in a particular device or location.</li>
+    </ul>
+</div>
+
+<div class="highlighted">
+    <p class="titleHighlighted">Note</p>
+    <ul>
+        <li>Locations can contain other locations.
+        <ul><li>"Cambridge bay" may contain separate children locations for its underwater network and shore station.</li></ul></li>
+        <li>Locations can contain device categories, which contain devices, which contain properties.</li>
+        <li>Searches can be performed without considering the hierarchy mentioned above.
+        <ul><li>You can search for locations with data on a specific property or search for all properties in a specific location.</li></ul></li>
+    </ul>
+</div>
+
+<h2 id="3">GetLocations(filters)</h2>
+<p>Obtain a filtered list of locations</p>
+<p><b>Input: </b>filters(cell array, optional) - Describes the data origin</p>
+<p><b>Output: </b>array of structs - Array of Locations</p>
+<p>The API endpoint is <span class = highlighttext>/locations</span>.</p>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/locations">https://data.oceannetworks.ca/OpenAPI#get-/locations</a> for usage and available query string parameters.</p>
+<p><b>Parameters: filters(cell array, optional)</b> - Query string parameters in the API request. Return all locations available if None. Supported parameters are:</p>
+<pre>    * locationCode
+    * deviceCategoryCode
+    * propertyCode
+    * dataProductCode
+    * dateFrom
+    * dateTo
+    * locationName
+    * deviceCode
+    * includeChildren
+</pre>
+<p><b>Returns([struct]):</b> API response. Each location returned in the array is a struct with following fields.</p>
+<pre>   * deployments: double
+    * locationName: char array
+    * depth: double
+    * bbox: dict
+        * bbox.maxDepth: double
+        * bbox.maxLat: double
+        * bbox.maxLon: double
+        * bbox.minDepth: double
+        * bbox.minLat: double
+        * bbox.minLon: double
+    * description: char array
+    * hasDeviceData: logical
+    * lon: double
+    * locationCode: char array
+    * hasPropertyData: logical
+    * lat: double
+    * dataSearchURL: char array
+</pre>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = {...
+    <span class="string">'locationCode'</span>, <span class="string">'FGPD'</span>, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2005-09-17T00:00:00.000Z'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2020-09-17T13:00:00.000Z'</span> ...
+    }; 
+onc.getLocations(params)
+</pre>
+<p> For more examples, see <a href="../../../examples/OncDiscoveryLocations.mlx">Onc Discovery Location example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getLocations(this, varargin)
+    filters = this.getFilters(varargin);
+    r = this.discoveryRequest(filters, <span class="string">'locations'</span>);
+<span class="keyword">end</span> </pre>
+
+<h2 id="4">GetLocationHierarchy(filters)</h2>
+<p>Obtain a location tree</p>
+<p><b>Input: </b>filters(cell array, optional) - Describes the data origin</p>
+<p><b>Output: </b>struct - Location tree</p>
+<p>The API endpoint is <span class = highlighttext>/locations/tree</span>.</p>
+<p>Return a hierarchical representation of the ONC Search Tree Nodes. The Search Tree is used in Oceans 3.0 to organize instruments and variables by location so that users can easily drill down by place name or mobile platform name to find the instruments or properties they are interested in.</p>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/locations/tree">https://data.oceannetworks.ca/OpenAPI#get-/locations/tree</a> for usage and available query string parameters.</p>
+<p><b>Parameters: filters(cell array, optional)</b> - Query string parameters in the API request. Return all locations available if None. Supported parameters are:</p>
+<pre>   * locationCode
+    * deviceCategoryCode
+    * propertyCode
+    * dataProductCode
+    * dateFrom
+    * dateTo
+    * locationName
+    * deviceCode
+    * includeChildren
+</pre>
+<p><b>Returns([struct]):</b> API response. Each location returned in the array is a struct with following fields.</p>
+<pre>    * locationName: char array
+    * children: struct | None
+    * description: char array
+    * hasDeviceData: logical
+    * locationCode: char array
+    * hasPropertyData: logical
+</pre>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = {<span class="string">'locationCode'</span>, <span class="string">'BACCC'</span>}; 
+onc.getLocationHierarchy(params)
+</pre>
+<p> For more examples, see <a href="../../../examples/OncDiscoveryLocations.mlx">Onc Discovery Location example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getLocationHierarchy(this, varargin)
+    filters = this.getFilters(varargin);
+    r = this.discoveryRequest(filters, <span class="string">'locations'</span>, <span class="string">'method'</span>, <span class="string">'getTree'</span>);
+<span class="keyword">end</span>
+</pre>
+
+<h2 id="5">GetDeployments(filters)</h2>
+<p>Obtain an array of device deployments.</p>
+<p><b>Input: </b>filters(cell array, optional) - Describes the data origin</p>
+<p><b>Output: </b>array of structs - Deployments found</p>
+<p>The API endpoint is <span class = highlighttext>/deployments</span>.</p>
+<p>Return all deployments defined in Oceans 3.0 which meet the filter criteria, where a deployment is the installation of a device at a location. The deployments service assists in knowing when and where specific types of data are available. 
+The primary purpose for the deployments service is to find the dates and locations of deployments and use the dateFrom and dateTo datetimes when requesting a data product using the dataProductDelivery web service.</p>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/deployments">https://data.oceannetworks.ca/OpenAPI#get-/deployments</a> for usage and available query string parameters.</p>
+<p><b>Parameters: filters(cell array, optional)</b> - Query string parameters in the API request. Return a tree of all available locations available if None. Supported parameters are:</p>
+<pre>   * locationCode
+    * deviceCategoryCode
+    * deviceCode
+    * propertyCode
+    * dateFrom
+    * dateTo</pre>
+<p><b>Returns([struct]):</b> API response. Each deployment returned in the array is a struct with the following structure.</p>
+<pre>    * begin: char array
+    * citation: struct
+    * depth: double
+    * deviceCategoryCode: char array
+    * deviceCode: char array
+    * end: char array | None
+    * hasDeviceData: logical
+    * heading: double | None
+    * lat: double
+    * locationCode: char array
+    * lon: double
+    * pitch: double | None
+    * roll: double | None</pre>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = {...
+    <span class="string">'locationCode'</span>, <span class="string">'BACAX'</span>, ...
+    <span class="string">'deviceCategoryCode'</span>, <span class="string">'CTD'</span>, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2015-09-17'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2015-09-17T13:00:00.000Z'</span>...
+    }; 
+onc.getDeployments(params)</pre>
+<p> For more examples, see <a href="../../../examples/OncDiscoveryDeployments.mlx">Onc Discovery Deployments example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getDeployments(this, varargin)
+    filters = this.getFilters(varargin);
+    r = this.discoveryRequest(filters, <span class="string">'deployments'</span>);
+<span class="keyword">end</span></pre>
+
+</pre><h2 id="6">GetDevices(filters)</h2>
+<p>Obtain a filtered list of devices</p>
+<p><b>Input: </b>filters(cell array, optional) - Describes the data origin</p>
+<p><b>Output: </b>array of structs - Devices found</p>
+<p>The API endpoint is <span class = highlighttext>/devices</span>.</p>
+<p>Return all the devices defined in Oceans 3.0 that meet a set of filter criteria. 
+    Devices are instruments that have one or more sensors that observe a property or phenomenon with a goal of producing an 
+    estimate of the value of a property. Devices are uniquely identified by a device code and can be deployed at multiple 
+    locations during their lifespan. The primary purpose of the devices service is to find devices that have the data you are interested in 
+    and use the deviceCode when requesting a data product using the dataProductDelivery web service.</p>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/devices">https://data.oceannetworks.ca/OpenAPI#get-/devices</a> for usage 
+    and available filters. 
+<p><b>Parameters: filters(cell array, optional)</b> - Query string parameters in the API request. Return all devices available if None.     Supported parameters are:</p>
+<pre>    * locationCode
+    * deviceCategoryCode
+    * deviceCode
+    * propertyCode
+    * dateFrom
+    * dateTo</pre>
+<p><b>Returns([struct]):</b> API response. Each device returned in the array is a struct with following fields.</p>
+<pre>    * cvTerm: struct
+    * cvTerm.device: array of structs
+        * cvTerm.device().uri: char array
+        * cvTerm.device().vocabulary: char array
+    * dataRating: array of structs
+        * dataRating().dateFrom: char array
+        * dataRating().dateTo: char array | None
+        * dataRating().samplePeriod: double
+        * dataRating().sampleSize: double
+    * deviceCategoryCode: char array
+    * deviceCode: char array
+    * deviceId: double
+    * deviceLink: char array
+    * deviceName: char array | None
+    * hasDeviceData: logical</pre>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> 
+    for more information.</p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = {...
+    <span class="string">'deviceCode'</span>, <span class="string">'BPR-Folger-59'</span>, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2005-09-17T00:00:00.000Z'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2020-09-17T13:00:00.000Z'</span> ...
+    };
+onc.getDevices(params)</pre>
+<p> For more examples, see <a href="../../../examples/OncDiscoveryDevices.mlx">Onc Discovery Devices example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getDevices(this, varargin)
+    filters = this.getFilters(varargin);
+    r = this.discoveryRequest(filters, <span class="string">'devices'</span>);
+<span class="keyword">end</span>
+</pre>
+
+</pre><h2 id="7">GetDeviceCategories(filters)</h2>
+<p>Obtain a filtered list of device categories</p>
+<p><b>Input: </b>filters(cell array, optional) - Describes the data origin</p>
+<p><b>Output: </b>array of structs - Device categories found</p>
+<p>The API endpoint is <span class = highlighttext>/deviceCategories</span>.</p>
+<p>Return all device categories defined in Oceans 3.0 that meet a filter criteria. A Device Category represents an instrument type 
+classification such as CTD (Conductivity, Temperature &amp; Depth Instrument) or BPR (Bottom Pressure Recorder). 
+Devices from a category can record data for one or more properties (variables). The primary purpose of this service is to find 
+device categories that have the data you want to access; the service provides the 
+deviceCategoryCode you can use when requesting a data product via the dataProductDelivery web service.</p>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/deviceCategories">https://data.oceannetworks.ca/OpenAPI#get-/deviceCategories</a> 
+    for usage and available filters. </p>
+<p><b>Parameters: filters(cell array, optional)</b> - Query string parameters in the API request. Return all device categories available if None.     Supported parameters are:</p>
+<pre>   * deviceCategoryCode
+    * deviceCategoryName
+    * description
+    * locationCode
+    * propertyCode</pre>
+<p><b>Returns([struct]):</b> API response. Each device returned in the array is a struct with following fields.</p>
+<pre>   * cvTerm: struct
+        * cvTerm.deviceCategory: array of structs
+        * cvTerm.deviceCategory().uri: char array
+        * cvTerm.deviceCategory().vocabulary: char array
+   * description: char array
+   * deviceCategoryCode: char array
+   * deviceCategoryName: char array
+   * hasDeviceData: logical
+   * longDescription: char array</pre>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> 
+    for more information.</p>
+<p><b>Example: </b></p>
+<pre class="codeinput">params = {...
+    <span class="string">'deviceCategoryCode'</span>, <span class="string">'CTD'</span>, ...
+    <span class="string">'deviceCategoryName'</span>, <span class="string">'Conductivity'</span>, ...
+    <span class="string">'description'</span>, <span class="string">'Temperature'</span> ...
+    };
+onc.getDeviceCategories(params)</pre>
+<p> For more examples, see <a href="../../../examples/OncDiscoveryDeviceCategories.mlx">Onc Discovery Device Categories example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getDeviceCategories(this, varargin)
+    filters = this.getFilters(varargin);
+    r = this.discoveryRequest(filters, <span class="string">'deviceCategories'</span>);
+<span class="keyword">end</span></pre>
+
+<h2 id="8">GetProperties(filters)</h2>
+<p>Obtain a filtered list of properties</p>
+<p><b>Input: </b>filters(cell array, optional) - Describes the data origin</p>
+<p><b>Output: </b>array of structs - Properties found</p>
+<p>The API endpoint is <span class = highlighttext>/properties</span>.</p>
+<p>Return all properties defined in Oceans 3.0 that meet a filter criteria. Properties are observable phenomena (aka, variables) are the 
+    common names given to sensor types (i.e., oxygen, pressure, temperature, etc). 
+    The primary purpose of this service is to find the available properties of the data you want to access; 
+    the service provides the propertyCode that you can use to request a data product via the dataProductDelivery web service.</p>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/properties">https://data.oceannetworks.ca/OpenAPI#get-/properties</a> for usage 
+    and available filters. </p>
+<p><b>Parameters: filters(cell array, optional)</b> - Query string parameters in the API request. Return all properties available if None.     Supported parameters are:</p>
+<pre>    * propertyCode
+    * propertyName
+    * description
+    * locationCode
+    * deviceCategoryCode
+    * deviceCode</pre>
+<p><b>Returns([struct]):</b> API response. Each device returned in the array is a struct with following fields.</p>
+<pre>   * cvTerm: struct
+    * cvTerm.property: array of structs
+        * cvTerm.property().uri: char array
+        * cvTerm.property().vocabulary: char array
+    * cvTerm.uom: array of structs
+        * cvTerm.uom().uri: char array
+        * cvTerm.uom().vocabulary: char array
+   * description: char array
+   * hasDeviceData: logical
+   * hasPropertyData: logical
+   * propertyCode: char array
+   * propertyName: char array
+   * uom: char array</pre>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> 
+    for more information.</p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = {...
+    <span class="string">'propertyCode'</span>, <span class="string">'conductivity'</span>, ...
+    <span class="string">'locationCode'</span>, <span class="string">'BACAX'</span>, ...
+    <span class="string">'deviceCategoryCode'</span>, <span class="string">'CTD'</span> ...
+    }; 
+onc.getProperties(params)
+</pre>
+<p> For more examples, see <a href="../../../examples/OncDiscoveryProperties.mlx">Onc Discovery Properties example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getProperties(this, varargin)
+    filters = this.getFilters(varargin);
+    r = this.discoveryRequest(filters, <span class="string">'properties'</span>);
+<span class="keyword">end</span></pre>
+
+<h2 id="9">GetDataProducts(filters)</h2>
+<p>Obtain a list of available data products for the filters</p>
+<p><b>Input: </b>filters(cell array, optional) - Describes the data origin</p>
+<p><b>Output: </b>array of structs - Data products found</p>
+<p>The API endpoint is <span class = highlighttext>/dataProducts</span>.</p>
+<p>Return all data products defined in Oceans 3.0 that meet a filter criteria. Data Products are downloadable representations of ONC 
+    observational data, provided in formats that can be easily ingested by analytical or visualization software. The primary purpose of this 
+    service is to identify which data products and formats (file extensions) are available for the locations, devices, device categories or 
+    properties of interest. Use the dataProductCode and extension when requesting a data product via the dataProductDelivery web service.</p>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/dataProducts">https://data.oceannetworks.ca/OpenAPI#get-/dataProducts</a> for usage 
+    and available filters. </p>
+<p><b>Parameters: filters(cell array, optional)</b> - Query string parameters in the API request. Return all data products available if None.     Supported parameters are:</p>
+<pre>   * dataProductCode
+    * extension
+    * dataProductName
+    * propertyCode
+    * locationCode
+    * deviceCategoryCode
+    * deviceCode</pre>
+<p><b>Returns([struct]):</b> API response. Each device returned in the array is a struct with following fields.</p>
+<pre>   * dataProductCode: char array
+    * dataProductName: char array
+    * dataProductOptions: array of structs
+        * dataProductOptions().allowableRange: array of structs | None
+            * dataProductOptions().allowableRange.lowerBound: char array
+            * dataProductOptions().allowableRange.onlyIntegers: logical
+            * dataProductOptions().allowableRange.unitOfMeasure: char array | None
+            * dataProductOptions().allowableRange.upperBound: char array
+        * dataProductOptions[].allowableValues: array of structs
+        * dataProductOptions[].defaultValues: char array
+        * dataProductOptions[].documentation: array of structs
+        * dataProductOptions[].option: char array
+        * dataProductOptions[].suboptions: array of structs | None
+    * extension: char array
+    * hasDeviceData: logical
+    * hasPropertyData: logical
+    * helpDocument: char array</pre>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> 
+    for more information.</p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = {<span class="string">'dataProductCode'</span>, <span class="string">'SHV'</span>}; 
+onc.getProperties(params)</pre>
+<p> For more examples, see <a href="../../../examples/OncDiscoveryDataProducts.mlx">Onc Discovery Data Products example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getDataProducts(this, varargin)
+    filters = this.getFilters(varargin);
+    r = this.discoveryRequest(filters, <span class="string">'dataProducts'</span>);
+<span class="keyword">end</span>
+</pre>
+
+<p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022b</a><br></p></div>

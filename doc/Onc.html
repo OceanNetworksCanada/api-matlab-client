@@ -1,0 +1,146 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Onc</title><meta name="generator" content="MATLAB 9.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2024-05-08"><meta name="DC.source" content="Onc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.0em; color:#d55000; line-height:100%; font-weight:bold; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.4em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:14px; line-height:140%; padding: 20px; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head>
+  <body>
+    <div class="content">
+<h1 id="1">The ONC class</h1>
+<p>The ONC class provides a wrapper for Oceans 3.0 API requests. All the client library&#8217;s functionality is provided as methods of this class. Create an ONC object to access this library&#8217;s functionalities. </p>
+<p><b>Parameters: </b></p>  
+<pre>    * token ([char]) - The ONC API token, which could be retrieved at <a href="https://data.oceannetworks.ca/Profile">https://data.oceannetworks.ca/Profile</a> once logged in.
+    * production (logical, optional, default = True) - Whether the ONC Production server URL is used for service requests.
+            True: Use the production server. 
+            False: Use the internal ONC test server (reserved for ONC staff IP addresses).
+    * showInfo (logical, optional, default = false) - Whether verbose script messages are displayed, such as request url and processing time information.
+            True: Print all information and debug messages (intended for debugging).
+            False: Only print information messages.
+    * outPath ([char], optional, default = 'output') - Output path for downloaded files. The directory will be created if it does not exist during the download.
+    * timeout (int, optional, default = 60) - Number of seconds before a request to the API is canceled
+</pre>
+<p>Returns: The Onc object created.</p>
+<p><b>Examples:</b></p>  
+<pre class="codeinput">
+onc = ONC("YOUR_TOKEN_HERE", 'showInfo', true, 'outPath', 'myOutPath');
+</pre>
+<p>For detailed information and usage examples, run doc command or visit MATLAB's help browser <a href="https://www.mathworks.com/help/matlab/">https://www.mathworks.com/help/matlab/</a> then find Ocean Networks Canada API Client under supplemental software</p>
+<p><b>Source code: </b></p>
+<pre class="codeinput"><span class="keyword">function</span> this = Onc(token, varargin)
+    p = inputParser;
+    addRequired(p, <span class="string">'token'</span>, @ischar);
+    addOptional(p, <span class="string">'production'</span>, true, @islogical);
+    addOptional(p, <span class="string">'showInfo'</span>, false, @islogical);
+    addOptional(p, <span class="string">'outPath'</span>, <span class="string">'output'</span>, @ischar);
+    addOptional(p, <span class="string">'timeout'</span>, 60, @isnumeric);
+    parse(p, token, varargin{:});
+
+    this.token      = strtrim(p.Results.token);
+    this.production = p.Results.production;
+    this.showInfo   = p.Results.showInfo;
+    this.timeout    = p.Results.timeout;
+
+    <span class="comment">% sanitize outPath</span>
+    opath = strtrim(p.Results.outPath);
+    <span class="keyword">if</span> strlength(opath) &gt; 0
+        opath = strrep(opath, <span class="string">'\'</span>, <span class="string">'/'</span>);
+        <span class="keyword">if</span> opath(end) == <span class="string">'/'</span>
+            opath = opath(1:end-1);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+        this.outPath = opath;
+
+    <span class="keyword">if</span> not(this.production)
+        this.baseUrl = <span class="string">'https://qa.oceannetworks.ca/'</span>;
+    <span class="keyword">end</span>
+
+    <span class="comment">%If a search tree file exists, load it.  If not, generate and save one</span>
+    [source_path,~,~] = fileparts(which(<span class="string">'Onc.m'</span>));
+    tree_path = fullfile(source_path,<span class="string">'onc_tree.mat'</span>);
+    <span class="keyword">if</span> ~exist(tree_path,<span class="string">'file'</span>)
+        fprintf(<span class="string">'\n Loading ONC search tree.  Accessible with onc.tree \n'</span>);
+        tree = util.extract_tree(this);
+        save(tree_path, <span class="string">'tree'</span>)
+    <span class="keyword">elseif</span> exist(tree_path,<span class="string">'file'</span>)
+        <span class="comment">%Check if it's more than a week old. If so, update it:</span>
+        dir_files = dir(source_path);
+        filenames = {dir_files(:).name};
+        [~,idx] = ismember(<span class="string">'onc_tree.mat'</span>,filenames);
+        treeFileDate = dir_files(idx).datenum;
+        <span class="keyword">if</span> now - treeFileDate &gt; 7
+            fprintf(<span class="string">'\n Updating ONC search tree.  Accessible with onc.tree \n'</span>);
+            tree = util.extract_tree(this);
+            save(tree_path, <span class="string">'tree'</span>)
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    temp = load(tree_path);
+    this.tree = temp.tree;
+    <span class="comment">%These codes can then be used for input to onc.getDevices by</span>
+    <span class="comment">%providing the locationCodes</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022b</a><br></p></div>
+</body></html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Ocean Networks Canada API Client Library</title><meta name="generator" content="MATLAB 9.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2024-05-08"><meta name="DC.source" content="Onc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.0em; color:#d55000; line-height:100%; font-weight:bold; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.4em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.3em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; max-width: 1000px;}
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.highlighted {
+    background-color: #e7f2fa;
+    display: inline-block;
+    margin: 1px 1px 20px;
+}
+
+.titleHighlighted {
+    background-color: #6ab0de;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 5px 10px;
+
+}
+.paddedText {
+    padding: 7px;
+}
+.cautionTitle {
+    background-color:  #f0b37e;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 5px 10px;
+}
+
+.caution {
+    background-color: #ffedcc;
+    display: inline-block;
+    margin: 1px 1px 20px;
+    max-width: 800;
+
+}
+
+.redTextWithWhiteBackground {
+    background-color: white;
+    padding: 2px;
+    color: red;
+}
+
+.redText {
+    color: red;
+    font-size: 15px;
+    padding: 5px 10px;
+    font-weight: bold;
+}
+
+.greenText {
+    color: #34926b;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.hintTitle {
+    background-color: #1abc9c;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 5px 10px;
+}
+
+.hintText {
+    background-color: #dbfaf4;
+    display: inline-block;
+    margin: 1px 1px 20px;
+    max-width: 800;
+}
+
+.hintText img {
+    max-width: 100%;
+    max-height: 100%;
+    box-sizing: border-box;
+    padding: 7px;
+    width: auto;
+    height: auto;
+    display: block;
+}
+.content { font-size:14px; line-height:140%; padding: 20px; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 2px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+</style></head>
+<body><div class="content">
+<h1> Ocean Networks Canada API Client Library</h1>
+<p> This library serves as a toolbox to access ONC Web Services which allows users to discover and retrieve Ocean Networks Canada's 12+ years of oceanographic data in raw, text, image, audio, video or any other format available. This codebase provides a class that wraps web service calls, complex workflows, and business logic so that users can download data with a single line of code. </p>
+<p><b>Check left panel for more documentation and code examples. You can also find code examples under Examples section from <a href = "https://www.mathworks.com/matlabcentral/fileexchange/74065-ocean-networks-canada-api-client-library">here</a></b></p>
+<h2> Introduction to ONC Web Services/API</h2>
+<h3>What are ONC Web Services?</h3>
+<p>A group of public web services that can be used to explore and download ONC data.</p>
+<h3>Documentation pages</h3>
+<p><a href="https://wiki.oceannetworks.ca/display/O2A/Oceans+3.0+API+Home">https://wiki.oceannetworks.ca/display/O2A/Oceans+3.0+API+Home</a></p>
+<p><a href="https://data.oceannetworks.ca/OpenAPI">https://data.oceannetworks.ca/OpenAPI</a></p>
+<h3>Tutorial Page</h3>
+<p><a href="https://oceannetworkscanada.github.io/api-python-client/Tutorial/Oceans_3.0_API_Tutorial.html">Web API Tutorial</a></p>
+<h3> Oceans 3.0 API overview </h3>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/API+Overview">here</a> for more information.</p>
+<h2>Glossary of terms</h2>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">here</a> for more information.</p>
+<h2>Main documentation</h2>
+<p>Check left panel to select and view documentation of each service and function.</p>
+<p class="footer"><br>Copyright 2024, ONC Data Team.<br></p></div>
+</body></html>
