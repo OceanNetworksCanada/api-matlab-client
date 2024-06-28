@@ -1,0 +1,306 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>OncRealTime</title><meta name="generator" content="MATLAB 9.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2024-05-06"><meta name="DC.source" content="OncRealTime.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.0em; color:#d55000; line-height:100%; font-weight:bold; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.4em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:14px; line-height:140%; padding: 20px; }
+
+.highlighted {
+    background-color: #e7f2fa;
+    display: inline-block;
+    margin: 1px 1px 20px;
+    max-width: 800;
+}
+.titleHighlighted{
+    background-color: #6ab0de;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 5px 10px;
+}
+
+.highlighttext {
+    background-color: white;
+    color: red;
+}
+
+pre, code { font-size:14px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+ </style></head>
+<body>
+    <div class="content">
+        <h1>ONC Real-time data methods</h1>
+        <h2 id="1">Contents</h2>
+        <p><b>To navigate directly to a specific part of the documentation (use the internal links), right-click on the section you're interested and select "Open" or "Open in New Tab".</b></p>
+        <div>
+            <ul>
+                <li><a href="#2">Near Real-Time data service</a></li>
+                <li><a href="#3">GetDirectByLocation(filters, allPages)</a></li>
+                <li><a href="#4">GetDirectByDevice(filters, allPages)</a></li>
+                <li><a href="#5">GetDirectRawByLocation(filters, allPages)</a></li>
+                <li><a href="#6">GetDirectRawByDevice(filters, allPages)</a></li>
+            </ul>
+        </div>
+
+<h2 id="2">Near Real-Time data service</h2>
+<p>Contains the functionality that wraps API real-time services. To be inherited by the Onc class Near real-time (as fast as they get into our database) data access methods allow the extraction of sensor data as time-series, either as processed scalar data with Quality Assurance and Control flags (QAQC) or directly as raw data obtained from the device in its specific output format. In contrast to the Data product download methods, this data can be downloaded directly without waiting for any kind of generation process. </p>
+<p>Common use cases include: </p>
+<div>
+    <ul>
+        <li>Plotting time series from properties in a specific time frame or in &#8220;near real-time&#8221;</li>
+        <li>Quickly obtaining the latest reading from a particular sensor</li>
+        <li>Obtaining raw unprocessed data from our instruments (data might require processing to be readable)</li>
+    </ul>
+</div>
+<div class="highlighted">
+    <p class="titleHighlighted">Note</p>
+    <ol>
+        <li>The methods <span class = highlighttext>getDirectByLocation()</span> and <span class = highlighttext>getDirectRawByLocation()</span> obtain data readings from a location no matter what device it came from (hence the need to specify a device category code instead of a single device code). You might want to obtain data by location instead of by device, as individual devices are often replaced/repositioned.  </li>
+        <li>Each request to our API can return a maximum of 100,000 samples; larger data requests must be downloaded as a sequence of pages. Use the allPages parameter to automatically download all pages required for your requested time frame.</li>
+    </ol>
+</div>
+<h2 id="3">GetDirectByLocation(filters, allPages)</h2>
+<p>Obtains scalar data from a location, from the source described by the filters</p>
+<p><b>Input: </b>  
+    <ul>
+        <li>filters(struct) - Describes the data origin</li>
+        <li>allPages(logical, optional) - When true, if the data requested is too large to fit a single API resquest, keep downloading data pages until we gather all data</li>
+    </ul>
+</p>
+<p><b>Output: </b> <ul><li>array of structs - Scalar data obtained for all sensors found</li></ul></p>
+<p>The API endpoint is <span class = highlighttext>/scalardata/location</span>.</p>
+<p>Parameters in filter: Query string parameters in the API request. Supported parameters are: </p>
+<pre>    * locationCode: char array
+    * deviceCategoryCode: char array
+    * propertyCode: char array
+    * sensorCategoryCodes: char array
+    * .....
+</pre>
+<p><b>Returns(struct):</b> API response. Each struct returned contains following fields: </p>  
+<pre>    * parameters: struct   
+    * message: char array   
+    * metadata: struct   
+    * ......
+</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/scalardata/location">https://data.oceannetworks.ca/OpenAPI#get-/scalardata/location</a> for full structure of response and all available filters.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = struct(...
+    <span class="string">'locationCode'</span>, <span class="string">'NCBC'</span>, ...
+    <span class="string">'deviceCategoryCode'</span>, <span class="string">'BPR'</span>, ...
+    <span class="string">'propertyCode'</span>, <span class="string">'seawatertemperature,totalpressure'</span>, ...
+    <span class="string">'rowLimit'</span>, 80000, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2019-11-23T00:00:00.000Z'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2019-11-23T00:01:00.000Z'</span> ...
+    ); 
+result = onc.getDirectByLocation(params);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncRealTime.mlx">Onc Real Time Data example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getDirectByLocation(this, filters, varargin)
+    [allPages] = util.param(varargin, <span class="string">'allPages'</span>, false);
+    r = this.getDirectAllPages(filters, <span class="string">'scalardata'</span>, <span class="string">'getByLocation'</span>, allPages);
+<span class="keyword">end</span>
+</pre>
+<h2 id="4">GetDirectByDevice(filters, allPages)</h2>
+<p>Obtains scalar data from a device, as described by the filters</p>
+<p><b>Input: </b>  
+    <ul>
+        <li>filters(struct) - Describes the data origin</li>
+        <li>allPages(logical, optional) - When true, if the data requested is too large to fit a single API resquest, keep downloading data pages until we gather all data</li>
+    </ul>
+</p>
+<p><b>Output: </b>   
+    <ul>
+        <li>array of structs - Scalar data obtained for all sensors found</li>
+    </ul>
+</p>
+<p>The API endpoint is <span class = highlighttext>/scalardata/device</span>.</p>
+<p>Parameters in filter: Query string parameters in the API request. Supported parameters are:   
+<pre>    * deviceCode: char array   
+    * sensorCategoryCodes: char array   
+    * dateFrom: char array   
+    * dateTo: char array   
+    * .....
+</pre>
+<p><b>Returns(struct):</b> API response. Each struct returned contains following fields:  
+<pre>    * parameters: struct   
+    * message: char array   
+    * metadata: struct   
+    * ......
+</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/scalardata/device">https://data.oceannetworks.ca/OpenAPI#get-/scalardata/device</a> for full structure of response and all available filters.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = struct(...
+    <span class="string">'deviceCode'</span>, <span class="string">'BPR-Folger-59'</span>, ...
+    <span class="string">'rowLimit'</span>, 80000, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2019-11-23T00:00:00.000Z'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2019-11-23T00:01:00.000Z'</span> ...
+    ); 
+result = onc.getDirectByDevice(params);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncRealTime.mlx">Onc Real Time Data example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getDirectByDevice(this, filters, varargin)
+    [allPages] = util.param(varargin, <span class="string">'allPages'</span>, false);
+    r = this.getDirectAllPages(filters, <span class="string">'scalardata'</span>, <span class="string">'getByDevice'</span>, allPages);
+<span class="keyword">end</span>
+</pre>
+<h2 id="5">GetDirectRawByLocation(filters, allPages)</h2>
+<p>Obtains raw data from a location, from the source described by the filters</p>
+<p><b>Input: </b>  
+    <ul>
+        <li>filters(struct) - Describes the data origin</li>
+        <li>allPages(logical, optional) - When true, if the data requested is too large to fit a single API resquest, keep downloading data pages until we gather all data</li>
+    </ul></p>
+<p><b>Output: </b>  
+    <ul>
+        <li>array of structs - Raw data obtained for all sensors found</li>
+    </ul></p>
+<p>The API endpoint is <span class = highlighttext>/rawdata/location</span>.</p>
+<p>Parameters in filter: Query string parameters in the API request. Supported parameters are:   
+<pre>    * locationCode: char array   
+    * deviceCategoryCode: char array   
+    * dateFrom: char array   
+    * dateTo: char array   
+    * .....
+</pre>
+<p><b>Returns(struct):</b> API response. Each struct returned contains following fields:
+<pre>    * citation: struct   
+    * message: char array   
+    * next(struct):       
+        * parameters: struct       
+        * url: char array   
+    * ......
+    
+</pre>
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/rawdata/location">https://data.oceannetworks.ca/OpenAPI#get-/rawdata/location</a> for full structure of response and all available filters.</p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = struct(...
+    <span class="string">'locationCode'</span>, <span class="string">'NCBC'</span>, ...
+    <span class="string">'deviceCategoryCode'</span>, <span class="string">'BPR'</span>, ...
+    <span class="string">'rowLimit'</span>, 80000, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2019-11-23T00:00:00.000Z'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2019-11-23T00:01:00.000Z'</span>, ...
+    <span class="string">'sizeLimit'</span>, 20, ...
+    <span class="string">'convertHexToDecimal'</span>, false ...
+    ); 
+result = onc.getDirectRawByLocation(params);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncRealTime.mlx">Onc Real Time Data example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getDirectRawByLocation(this, filters, varargin)
+    [allPages] = util.param(varargin, <span class="string">'allPages'</span>, false);
+    r = this.getDirectAllPages(filters, <span class="string">'rawdata'</span>, <span class="string">'getByLocation'</span>, allPages);
+<span class="keyword">end</span>
+</pre>
+<h2 id="6">GetDirectRawByDevice(filters, allPages)</h2>
+<p>Obtains raw data from a device, as described by the filters </p>
+<p><b>Input: </b>  
+    <ul>
+        <li>filters(struct) - Describes the data origin</li>
+        <li>allPages(logical, optional) - When true, if the data requested is too large to fit a single API resquest, keep downloading data pages until we gather all data</li>
+    </ul>
+</p>
+<p><b>Output: </b>  
+    <ul>
+        <li>array of structs - Raw data obtained for all sensors found</li>
+    </ul>
+</p>
+<p>The API endpoint is <span class = highlighttext>/rawdata/device</span>.</p>
+<p>Parameters in filter: Query string parameters in the API request. Supported parameters are:   
+<pre>    * deviceCode: char array   
+    * dateFrom: char array   
+    * dateTo: char array   
+    * .....
+</pre>
+<p><b>Returns(struct):</b> API response. Each struct returned contains following fields:   
+<pre>    * citation: struct   
+    * message: char array   
+    * next(struct):       
+        * parameters: struct       
+        * url: char array   
+    * ......
+</pre> 
+<p>See <a href="https://data.oceannetworks.ca/OpenAPI#get-/rawdata/device">https://data.oceannetworks.ca/OpenAPI#get-/rawdata/device</a> for full structure of response and all available filters. </p>
+<p>Check <a href="https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms">https://wiki.oceannetworks.ca/display/O2A/Glossary+of+Terms</a> for more information. </p>
+<p><b>Example:</b></p>
+<pre class="codeinput">params = struct(...
+    <span class="string">'deviceCode'</span>, <span class="string">'BPR-Folger-59'</span>, ...
+    <span class="string">'rowLimit'</span>, 80000, ...
+    <span class="string">'dateFrom'</span>, <span class="string">'2019-11-23T00:00:00.000Z'</span>, ...
+    <span class="string">'dateTo'</span>, <span class="string">'2019-11-23T00:01:00.000Z'</span>, ...
+    <span class="string">'sizeLimit'</span>, 20, ...
+    <span class="string">'convertHexToDecimal'</span>, false ...
+    ); 
+result = onc.getDirectRawByDevice(params);
+</pre>
+<p> For more examples, see <a href="../../../examples/OncRealTime.mlx">Onc Real Time Data example live script</a></p>
+<p><b>Source code:</b></p>
+<pre class="codeinput"><span class="keyword">function</span> r = getDirectRawByDevice(this, filters, varargin)
+    [allPages] = util.param(varargin, <span class="string">'allPages'</span>, false);
+    r = this.getDirectAllPages(filters, <span class="string">'rawdata'</span>, <span class="string">'getByDevice'</span>, allPages);
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022b</a><br></p></div>
+</body></html>

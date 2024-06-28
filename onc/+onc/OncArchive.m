@@ -51,7 +51,9 @@ classdef OncArchive < onc.Service
             % Returns: (struct) Information on the download result
             %
             % Documentation: https://wiki.oceannetworks.ca/display/CLmatlab/Archive+file+download+methods
-            
+            if ~exist('filename', 'var')
+                filename = '';
+            end
             [overwrite, showMsg] = util.param(varargin, 'overwrite', false, 'showMsg', true);
             
             url = this.serviceUrl('archivefiles');
@@ -61,10 +63,11 @@ classdef OncArchive < onc.Service
             
             [response, info] = ...
                 util.do_request(url, filters, 'timeout', this.timeout, 'showInfo', this.showInfo, ...
-                                'rawResponse', true, 'showProgress', true);
+                                'showProgress', true);
 
             if not(info.status == 200)
-                fileInfo = jsondecode(response);
+                %fileInfo = jsondecode(response);
+                fileInfo = response;
                 return;
             end
 
@@ -76,9 +79,6 @@ classdef OncArchive < onc.Service
                 if saveStatus == 0
                     txtStatus = 'completed';
                     if showMsg, fprintf('   File was downloaded to "%s"\n', filename); end
-                elseif saveStatus == -2
-                    if showMsg, fprintf('   File was skipped (already exists).\n'); end
-                    txtStatus = 'skipped';
                 end
 
                 fullUrl = this.getDownloadUrl(filename);
