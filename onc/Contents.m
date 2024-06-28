@@ -20,4 +20,4 @@
 %   examples/OncDeliveryDataProducts.mlx      - Example Usage of OncDelivery Service
 %   examples/OncArchive.mlx                   - Example Usage of OncArchive Service
 %
-% Copyright 2024, ONC Data Team
+% Copyright 2024 Ocean Networks Canada
