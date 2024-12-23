@@ -74,7 +74,6 @@ function tree = probe_children(input, tree)
 %This is a recursive loop to get details about each child
 
     for ii=1:size(input,1)
-
         %Clear variables:
         clear struct_set struct_set_info
         
@@ -99,12 +98,15 @@ function tree = probe_children(input, tree)
             treeLocationName = strjoin(strsplit(treeLocationName,'.'),'_');
             treeLocationName = strjoin(strsplit(treeLocationName,''''),'_');
             treeLocationName = strjoin(strsplit(treeLocationName,'/'),'_');
+    
+            % Check for and remove accents in location name characters
+            treeLocationName = replaceaccentcharacters(treeLocationName);
             
             %Split and check to see if the first character is a number
             split_parts = strsplit(treeLocationName,'_');
             if isempty(split_parts{1})
                 for kk=1:length(split_parts)-1
-                	split_parts{kk} = split_parts{kk+1};
+            	    split_parts{kk} = split_parts{kk+1};
                 end
                 split_parts = split_parts(1:end-1);
             
@@ -127,10 +129,49 @@ function tree = probe_children(input, tree)
         
         tree.(fieldnames{ii+1}) = probe_children(input(ii).children, tree.(fieldnames{ii+1}));
         %input(ii).children = probe_children(input(ii).children);
-
-
-
     end
-
 end
 
+function outputStr = replaceaccentcharacters(inputStr)
+%%---------------------------------------------------------------------
+% General:  Replace accented characters with base ASCII equivalents
+%
+% Input:    inputStr - string containing accented characters
+%           CHAR_REPLACEMENT - character array containing non-base ASCII characters and their replacements
+%
+% Input:    outputStr - string with base ASCII characters only
+%
+% Modify Date/Author:  20241218, S. Plovie, A. Slonimer
+%---------------------------------------------------------------------
+
+% Constants
+CHAR_REPLACEMENT = {...
+    'áàâäãå', 'a'; ...
+    'ÁÀÂÄÃÅ', 'A'; ...
+    'œéèêë', 'e'; ...
+    'ÉÈÊË', 'E'; ...
+    'íìîï', 'i'; ...
+    'ÍÌÎÏ', 'I'; ...
+    'óòôöõø', 'o'; ...
+    'ÓÒÔÖÕØ', 'O'; ...
+    'úùûü', 'u'; ...
+    'ÚÙÛÜ', 'U'; ...
+    'ýÿ', 'y'; ...
+    'Ý', 'Y'; ...
+    'ç', 'c'; ...
+    'Ç', 'C'; ...
+    'ñ', 'n'; ...
+    'Ñ', 'N'; ...
+    };
+
+%% Replace accented characters
+outputStr = inputStr;
+if any(~isempty(intersect(inputStr, strjoin(CHAR_REPLACEMENT(:, 1), ''))))
+    for iCharRep = 1:length(CHAR_REPLACEMENT)
+        [~, iOutputStr] = intersect(outputStr, CHAR_REPLACEMENT{iCharRep, 1});
+        if ~isempty(iOutputStr)
+            outputStr(iOutputStr) = CHAR_REPLACEMENT{iCharRep, 2};
+        end
+    end
+end
+end
