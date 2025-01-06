@@ -1,5 +1,5 @@
 % Ocean Networks Canada API Client Library
-% Version 2.2.0 10-Jun-2024
+% Version 2.2.2 06-Jan-2025
 % 
 % For documentation click or type directly in the command window: <a href="matlab: doc ONC Toolbox">doc ONC Toolbox</a>.
 % 
@@ -20,4 +20,4 @@
 %   examples/OncDeliveryDataProducts.mlx      - Example Usage of OncDelivery Service
 %   examples/OncArchive.mlx                   - Example Usage of OncArchive Service
 %
-% Copyright 2024 Ocean Networks Canada
+% Copyright 2025 Ocean Networks Canada
