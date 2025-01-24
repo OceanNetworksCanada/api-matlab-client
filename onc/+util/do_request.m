@@ -25,7 +25,8 @@ function [result, info] = do_request(url, filters, varargin)
     % run and time request
     if showInfo, fprintf('\nRequesting URL:\n   %s\n', fullUrl); end
     tic
-    response = request.send(uri,options);
+    consumer = onc.ChunkedResponseConsumer;
+    response = request.send(uri, options, consumer);
     
     duration = toc;
     
