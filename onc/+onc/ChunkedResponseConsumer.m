@@ -1,6 +1,6 @@
 classdef ChunkedResponseConsumer < matlab.net.http.io.GenericConsumer
 %% ChunkedResponseConsumer Consumer with an option to control the size of 
-% chucks which a response is processed in.
+% chunks which a response is processed in.
 %
 %   Default MATLAB (R2022b) implementation of method `send` in 
 %   `matlab.net.http.ResponseMeassage` has a size limit of 2^30 bytes. 
@@ -11,7 +11,7 @@ classdef ChunkedResponseConsumer < matlab.net.http.io.GenericConsumer
 %   seems to be able to handle big responses as well, its processing speed is 
 %   slower since MATLAB built-in consumers process parts of responses when 
 %   they get them. This consumer accumulates data in a buffer of the given 
-%   size and processes the whole accumulated chunk at one pass.
+%   size and processes the whole accumulated chunk in one pass.
 
     properties (Access=private)
         chunkSize           % Size of chunks to process in bytes (int)
@@ -33,6 +33,17 @@ classdef ChunkedResponseConsumer < matlab.net.http.io.GenericConsumer
 
             if nargin < 1
                 chunkSize = 2^29; % default value
+            else
+                if ~isnumeric(chunkSize) || length(chunkSize) > 1
+                    error('MatlabAPI:ChunkedResponseConsumer:BadInputType', ...
+                    'chunkSize is expected to be a number.')
+                end
+                if chunkSize > 2^30
+                    error('MatlabAPI:ChunkedResponseConsumer:BadInputValue', ...
+                    ['Provided chunkSize is too big and will cause an ' ...
+                    'error when a response is decoded if its size ' ...
+                    'exceeds 2^30 bytes. Provided value: ' num2str(chunkSize)])
+                end
             end
             obj@matlab.net.http.io.GenericConsumer;
             obj.chunkSize = chunkSize;
@@ -84,13 +95,13 @@ classdef ChunkedResponseConsumer < matlab.net.http.io.GenericConsumer
     end
 
     methods (Access = protected)
-        function bufsize = start(obj)
+        function buffsize = start(obj)
             %% Call when the response starts
             obj.responseBuffer = {}; 
             obj.CurrentLength = 0;
             obj.accumulatedBytes = 0;
             obj.positionInBuffer = 1;
-            bufsize = start@matlab.net.http.io.GenericConsumer(obj);
+            buffsize = start@matlab.net.http.io.GenericConsumer(obj);
         end
     end
 end
