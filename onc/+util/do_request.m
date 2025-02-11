@@ -25,7 +25,9 @@ function [result, info] = do_request(url, filters, varargin)
     % run and time request
     if showInfo, fprintf('\nRequesting URL:\n   %s\n', fullUrl); end
     tic
-    response = request.send(uri,options);
+    chunkSize = 2^29; % half of the max response size that `send` can handle
+    consumer = onc.ChunkedResponseConsumer(chunkSize);
+    response = request.send(uri, options, consumer);
     
     duration = toc;
     
