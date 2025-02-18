@@ -1,5 +1,4 @@
 function config = globals()
-    clc;
  
     addpath(genpath(''));
     addpath(genpath('util'));
@@ -12,7 +11,7 @@ function config = globals()
     end       
     
     % grab token from "TOKEN" file or get from env
-    f = fopen('TOKEN','r');
+    f = fopen('TOKEN.txt','r');
     if f > 0
        token = fgetl(f);
        fclose(f);
