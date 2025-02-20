@@ -9,13 +9,13 @@ Directory structure is as follows:
 * suites:    Test suites
 * util:      General use classes and methods
 
-Although each test suite inherits from matlab.unittest.TestCase, each is written as a collection of test cases at the integration level. This simplified implementation at the time of this writing since we're testing returned structure instead of values.
+Although each test suite inherits from matlab.unittest.TestCase, each is written as a collection of test cases at the integration level. This simplifies implementation at the time of this writing since we're testing returned structure instead of values.
 
 
 **TESTING REQUIREMENTS**
 
 1. MATLAB unit testing framework (usually included)
-2. Create a text file named "TOKEN" (no extension) that contains your token. This file will NOT be uploaded to GitHub (due to a .gitignore entry) nor packed into the toolbox (file exclusion) and exists to avoid publishing your token by mistake. If in doubt, clear its contents before publishing changes.
+2. Create a text file in onc/tests/ named "TOKEN". Put your API token in this text file, then run globals() on the Matlab command line to update/create config.mat. This TOKEN.txt file will NOT be uploaded to GitHub (due to a .gitignore entry) nor packed into the toolbox (file exclusion) and exists to avoid publishing your token by mistake. If in doubt, clear its contents before publishing changes.
 
 **RUNNING TESTS**
 
@@ -27,7 +27,7 @@ Although each test suite inherits from matlab.unittest.TestCase, each is written
     in folder api-matlab-client, run command:
     runtests('onc/tests/suites', 'IncludeSubfolders', true);
 
-(if it doesn't display test results table at the end, all tests pass. You can also remove semicolon to see test results)
+If there is no test results table displayed at the end, all tests pass. You can also remove the semicolon to see test results.
     
 *Running a test suite:*
 
@@ -38,7 +38,6 @@ Although each test suite inherits from matlab.unittest.TestCase, each is written
 *Running a test case:*
     
     runtests(<NAME_OF_TEST_SUITE_CLASS>/<NAME_OF_CASE_METHOD>)
-
     i.e.:
     runtests("Test01_Locations/testInvalidTimeRangeGreaterStartTime")
 
