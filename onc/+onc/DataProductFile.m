@@ -50,17 +50,16 @@ classdef DataProductFile < handle
             %% Downloads this data product file
             % Can poll, wait and retry if the file is not ready to download
             %
-            % * overwrite:  (logical) When true, existing files will be overwritten, otherwise they are skipped
             % * timeout:    (int)     As provided by the Onc class
             % * pollPeriod: (float)   As provided by the Onc class
             % * outPath:    ([char])  As provided by the Onc class
             % * maxRetries: (int)     As provided by the Onc class
+            % * overwrite:  (logical) When true, existing files will be overwritten, otherwise they are skipped
             %
             % Returns: (integer) The final response's HTTP status code
             
             log = onc.DPLogger();
             this.status = 202;
-            request = matlab.net.http.RequestMessage;
             uri = matlab.net.URI(this.baseUrl);
             uri.Query = matlab.net.QueryParameter(this.filters);
             fullUrl = char(uri);
@@ -68,56 +67,49 @@ classdef DataProductFile < handle
             options = matlab.net.http.HTTPOptions('ConnectTimeout', timeout);
             
             while this.status == 202
-                % run and time request
+                % run request, time it, save response to file and catch exceptions
                 if this.showInfo, log.printLine(sprintf('Requesting URL:\n   %s', fullUrl)); end
                 tic
-                response  = request.send(uri,options);
+                [response, saveResult] = util.response_to_file( ...
+                    uri, options, outPath, '', overwrite);
+                if ~isempty(response.StatusCode)
+                    if saveResult == -2
+                        this.status = 777;
+                    else
+                        this.status = response.StatusCode;
+                    end
+                else
+                    this.status = NaN;
+                end
                 duration = toc;
-                
                 this.downloadUrl = fullUrl;
-                this.status      = response.StatusCode;
-                this.retries     = this.retries + 1;
-
+                this.retries = this.retries + 1;
                 if maxRetries > 0 && this.retries > maxRetries
                     log.printLine(sprintf('ERROR: Maximum number of retries (%d) exceeded', maxRetries));
                     endStatus = 408;
                     return
                 end
-
-                % Status 200: file downloaded, 202: processing, 204: no data, 400: error, 404: index out of bounds, 410: gone (file deleted from FTP)
+                % Status codes
+                %   200: file downloaded, 
+                %   202: processing, 
+                %   204: no data, 
+                %   400: error, 
+                %   404: index out of bounds, 
+                %   410: gone (file deleted from FTP)
                 s = this.status;
                 if s == 200
-                    % File downloaded, get filename from header and save
-                
+                    % File downloaded, get filename from header
                     this.downloaded = true;
-                    filename        = this.extractNameFromHeader(response);
-                    this.fileName   = filename;
-                    
+                    filename = this.extractNameFromHeader(response);
+                    this.fileName = filename;
                     % Obtain filesize from headers, or fallback to body string length
                     lengthData = response.getFields('Content-Length');
-                    [~, ~, ext] = fileparts(filename);
-                    if length(lengthData) == 1
+                    if ~isempty(lengthData)
                         this.fileSize = str2double(lengthData.Value);
-                    elseif strcmp(ext, '.xml')
-                        this.fileSize = length(xmlwrite(response.Body.Data));
                     else
-                        this.fileSize = strlength(response.Body.Data);
+                        this.fileSize = 0;
                     end
-                    try
-                        saveResult = util.save_as_file(response.Body.Data, outPath, filename, 'overwrite', overwrite);
-                    catch ME
-                        if strcmp(ME.identifier, 'onc:FileExistsError')
-                            log.printLine(sprintf('Skipping "%s": File already exists\n', this.fileName));
-                            this.status = 777;
-                            saveResult = -2;
-                            this.downloaded = false;
-                        else
-                            rethrow(ME);
-                        end
-                    end
-
                     this.downloadingTime = round(duration, 3);
-
                     % log status
                     if saveResult == 0
                         log.printLine(sprintf('Downloaded "%s"\n', this.fileName));
@@ -133,14 +125,22 @@ classdef DataProductFile < handle
                     % API Error
                     util.print_error(response, fullUrl);
                     throw(util.prepare_exception(s, double(response.Body.Data.errors.errorCode)));
-
                 elseif s == 404
                     % Index too high, no more files to download
-                else
+                elseif s == 410
                     % File is gone
                     log.printLine(sprintf('ERROR: File with runId %d and index "%s" not found\n', ...
                                   this.filters.dpRunId, this.filters.index));
                     util.print_error(response, fullUrl);
+                elseif s == 777
+                    % File is skipped
+                    this.downloaded = false;
+                    filename = this.extractNameFromHeader(response);
+                    this.fileName = filename;
+                    log.printLine(sprintf('Skipping "%s": File already exists\n', this.fileName));
+                else
+                    log.printLine(['ERROR: Unexpected error at the stage of sending a request ' ...
+                                   'or saving a response into a file\n']);
                 end
             end
 
