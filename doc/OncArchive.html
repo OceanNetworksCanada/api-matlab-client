@@ -251,44 +251,49 @@ downloadInfo = onc.getFile(filename);</pre>
     url = this.serviceUrl(<span class="string">'archivefiles'</span>);
     filters = struct(<span class="string">'token'</span>, this.token,<span class="string">'method'</span>, <span class="string">'getFile'</span>, <span class="string">'filename'</span>, filename);
 
-    <span class="keyword">if</span> showMsg, fprintf(<span class="string">'Downloading file "%s"...\n'</span>, filename); <span class="keyword">end</span>
+    <span class="keyword">if</span> showMsg
+        fprintf(<span class="string">'Downloading file "%s"...\n'</span>, filename);
+    <span class="keyword">end</span>
 
-    [response, info] = <span class="keyword">...</span>
-    util.do_request(url, filters, <span class="string">'timeout'</span>, this.timeout, <span class="string">'showInfo'</span>, this.showInfo, <span class="keyword">...</span>
-                <span class="string">'showProgress'</span>, true);
-
-    <span class="keyword">if</span> not(info.status == 200)
+    [response, info] = util.do_request( <span class="keyword">...</span>
+        url, filters, <span class="keyword">...</span>
+        <span class="string">'timeout'</span>, this.timeout, <span class="keyword">...</span>
+        <span class="string">'showInfo'</span>, this.showInfo, <span class="keyword">...</span>
+        <span class="string">'showProgress'</span>, true, <span class="keyword">...</span>
+        <span class="string">'outputPath'</span>, this.outPath, <span class="keyword">...</span>
+        <span class="string">'filename'</span>, filename, <span class="keyword">...</span>
+        <span class="string">'overwrite'</span>, overwrite <span class="keyword">...</span>
+        );
+    <span class="keyword">if</span> info.status ~= 200
         fileInfo = response;
         <span class="keyword">return</span>;
-    <span class="keyword">end</span>
-
-    outPath    = this.outPath;
-    saveStatus = util.save_as_file(response, outPath, filename, overwrite);
-
-    txtStatus  = <span class="string">'error'</span>;
-    <span class="keyword">if</span> info.status == 200
-        <span class="keyword">if</span> saveStatus == 0
-            txtStatus = <span class="string">'completed'</span>;
-            <span class="keyword">if</span> showMsg, fprintf(<span class="string">'   File was downloaded to "%s"\n'</span>, filename); <span class="keyword">end</span>
+    <span class="keyword">elseif</span> info.saveStatus == -1
+        txtStatus  = <span class="string">'error'</span>;
+        size = 0;
+        duration = 0;
+    <span class="keyword">elseif</span> info.saveStatus == -2
+        throw( <span class="keyword">...</span>
+            MException( <span class="keyword">...</span>
+                <span class="string">'onc:FileExistsError'</span>, <span class="keyword">...</span>
+                [<span class="string">'Data product file exists in destination '</span> <span class="keyword">...</span>
+                 <span class="string">'but overwrite is set to false'</span>] <span class="keyword">...</span>
+                ) <span class="keyword">...</span>
+            );
+    <span class="keyword">else</span>
+        txtStatus = <span class="string">'completed'</span>;
+        size = info.size;
+        duration = round(info.duration, 3);
+        <span class="keyword">if</span> showMsg
+            fprintf(<span class="string">'   File was downloaded to "%s"\n'</span>, filename);
         <span class="keyword">end</span>
-
-        fullUrl = this.getDownloadUrl(filename);
-        fileInfo = struct(             <span class="keyword">...</span>
-            <span class="string">'url'</span>         , fullUrl,   <span class="keyword">...</span>
-            <span class="string">'status'</span>      , txtStatus, <span class="keyword">...</span>
-            <span class="string">'size'</span>        , info.size, <span class="keyword">...</span>
-            <span class="string">'downloadTime'</span>, round(info.duration, 3), <span class="keyword">...</span>
-            <span class="string">'file'</span>        , filename);
-
-        <span class="keyword">return</span>;
     <span class="keyword">end</span>
-
+    fullUrl = this.getDownloadUrl(filename);
     fileInfo = struct( <span class="keyword">...</span>
-        <span class="string">'url'</span>         , <span class="string">""</span>,        <span class="keyword">...</span>
-        <span class="string">'status'</span>      , txtStatus, <span class="keyword">...</span>
-        <span class="string">'size'</span>        , 0,         <span class="keyword">...</span>
-        <span class="string">'downloadTime'</span>, 0,         <span class="keyword">...</span>
-        <span class="string">'file'</span>        , <span class="string">""</span>);
+        <span class="string">'url'</span>, fullUrl, <span class="keyword">...</span>
+        <span class="string">'status'</span>, txtStatus, <span class="keyword">...</span>
+        <span class="string">'size'</span>, size, <span class="keyword">...</span>
+        <span class="string">'downloadTime'</span>, duration, <span class="keyword">...</span>
+        <span class="string">'file'</span>, filename);
 <span class="keyword">end</span>
 </pre>
 <h2 id="section5">GetDirectFiles(filters, allPages, overwrite)</h2>
