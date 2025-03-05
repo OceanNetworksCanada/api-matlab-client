@@ -1,15 +1,26 @@
 function [result, info] = do_request(url, filters, varargin)
-    [timeout, showInfo, rawResponse, showProgress] = ...
-        util.param(varargin, 'timeout', 120, 'showInfo', false, 'rawResponse', false, 'showProgress', false);
+    [timeout, showInfo, rawResponse, showProgress, outputPath, filename, overwrite] = ...
+        util.param( ...
+            varargin, ...
+            'timeout', 120, ...
+            'showInfo', false, ...
+            'rawResponse', false, ...
+            'showProgress', false, ...
+            'outputPath', '.', ...
+            'filename', '', ...
+            'overwrite', false ...
+            );
     
     % sanitize filters
     filters = util.sanitize_filters(filters);
 
     % prepare HTTP request
-    request = matlab.net.http.RequestMessage;
+    request = matlab.net.http.RequestMessage('GET');
     uri = matlab.net.URI(url);
     uri.Query = matlab.net.QueryParameter(filters);
     fullUrl = char(uri);
+    isFileRequest = isfield(filters, 'method') ...
+        && strcmp(filters.method, 'getFile');
     
     % prepare MATLAB request options
     options = matlab.net.http.HTTPOptions();
@@ -25,9 +36,15 @@ function [result, info] = do_request(url, filters, varargin)
     % run and time request
     if showInfo, fprintf('\nRequesting URL:\n   %s\n', fullUrl); end
     tic
-    chunkSize = 2^29; % half of the max response size that `send` can handle
-    consumer = onc.ChunkedResponseConsumer(chunkSize);
-    response = request.send(uri, options, consumer);
+    if isFileRequest
+        [response, endCode] = util.response_to_file( ...
+            uri, options, outputPath, filename, overwrite);
+    else
+        chunkSize = 2^29; 
+        consumer = onc.ChunkedResponseConsumer(chunkSize);
+        response = request.send(uri, options, consumer);
+        endCode = NaN;
+    end
     
     duration = toc;
     
@@ -39,25 +56,26 @@ function [result, info] = do_request(url, filters, varargin)
     
     % prepare result
     status = double(response.StatusCode);
-    switch status
-        case 200
-            % OK
-            if rawResponse
-                result = response;
-            else
-                result = response.Body.Data;
-            end
-        case 202
-            % Accepted, no need to print error, handle manually
+    if isempty(status)
+        result = [];
+    elseif status == 200
+        % OK
+        if rawResponse
+            result = response;
+        else
             result = response.Body.Data;
-        otherwise
-            util.print_error(response, fullUrl);
-            if status == 400 || status == 401
-                errorStruct = response.Body.Data;
-                throw(util.prepare_exception(status, double(errorStruct.errors.errorCode)));
-            else
-                throw(util.prepare_exception(status));
-            end
+        end
+    elseif status == 202
+        % Accepted, no need to print error, handle manually
+        result = response.Body.Data;
+    else
+        util.print_error(response, fullUrl);
+        if status == 400 || status == 401
+            errorStruct = response.Body.Data;
+            throw(util.prepare_exception(status, double(errorStruct.errors.errorCode)));
+        else
+            throw(util.prepare_exception(status));
+        end
     end
 
     % prepare info.size only if the response is a file, otherwise 0
@@ -69,8 +87,10 @@ function [result, info] = do_request(url, filters, varargin)
         else
             size = str2double(hConLength.Value);
         end
-        
     end
 
-    info = struct('status', status, 'size', size, 'duration', duration);
+    info = struct('status', status, ...
+                  'saveStatus', endCode, ...
+                  'size', size, ...
+                  'duration', duration);
 end
