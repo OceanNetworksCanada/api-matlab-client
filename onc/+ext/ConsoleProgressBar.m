@@ -3,8 +3,8 @@ classdef ConsoleProgressBar < handle
         percent  double  = 0.0
         segments uint32  = 10
         chHead   char    = '>'
-        chBody   char    = '='
-        chTrack  char    = '·'
+        chBody   char    = '#'
+        chTrack  char    = '-'
         chLeft   char    = '['
         chRight  char    = ']'
         prepend  char    = []

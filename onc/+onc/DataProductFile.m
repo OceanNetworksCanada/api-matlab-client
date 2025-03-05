@@ -167,7 +167,7 @@ classdef DataProductFile < handle
                 {'complete', 'running', 'no content', 'error', 'unauthorized', 'not found', ...
                 'gone', 'server error', 'skipped'});
 
-            txtStatus = errorCodes(string(this.status));
+            txtStatus = errorCodes(num2str(this.status));
             
             filename = this.fileName;
             if isempty(this.fileName)
