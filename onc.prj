@@ -14,8 +14,8 @@ MATLAB Requirements: R2022b (can work on versions 2018a and newer, but it is not
 Full Documentation: https://wiki.oceannetworks.ca/display/CLIBS/API+Client+Libraries
 GitHub Repository: https://github.com/OceanNetworksCanada/api-matlab-client
 
-Current Maintainer: Zelalem Engida, Angela Schlesinger
-Past Contributors: Allan Rempel, Ryan Ross, Dany Cabrera</param.description>
+Current Maintainer: Angela Schlesinger, Alex Slonimer
+Past Contributors: Allan Rempel, Ryan Ross, Dany Cabrera, Zelalem Engida</param.description>
     <param.screenshot>${PROJECT_ROOT}\logo.png</param.screenshot>
     <param.version>2.2.4</param.version>
     <param.output>${PROJECT_ROOT}\Ocean Networks Canada API Client.mltbx</param.output>
