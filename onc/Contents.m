@@ -1,5 +1,5 @@
 % Ocean Networks Canada API Client Library
-% Version 2.2.3 23-Jan-2025
+% Version 2.2.4 14-Apr-2025
 % 
 % For documentation click or type directly in the command window: <a href="matlab: doc ONC Toolbox">doc ONC Toolbox</a>.
 % 
