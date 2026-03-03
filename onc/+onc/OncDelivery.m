@@ -275,7 +275,7 @@ classdef OncDelivery < onc.Service
             end
 
             % get metadata if required
-            if getMetadata
+            if getMetadata & ~isempty(fileList)
                 dpf = onc.DataProductFile(runId, 'meta', baseUrl, token, this.showInfo);
                 status = dpf.download(timeout, this.pollPeriod, outPath, maxRetries, overwrite);
                 if status ~= 200
