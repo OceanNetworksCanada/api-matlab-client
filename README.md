@@ -21,5 +21,5 @@ For complete documentation and examples, visit [ONC File Exchange](https://www.m
 
 ## Maintainers
 
-* Current maintainer: [Angela Schlesinger](schlesin@uvic.ca), [Alex Slonimer](slonimer@uvic.ca)
-* Previous maintainers: [Allan Rempel](agrempel@uvic.ca), [Ryan Ross](ryanross@uvic.ca); [Dany Cabrera](dcabrera@oceannetworks.ca), [Zelalem Engida](ze@uvic.ca)
+* Current maintainer: Matlab Team
+* Previous maintainers: [Angela Schlesinger](schlesin@uvic.ca), [Alex Slonimer](slonimer@uvic.ca)

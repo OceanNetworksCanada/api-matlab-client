@@ -137,6 +137,10 @@ classdef MultiPage < handle
                                 end
                                 concatenatedStruct.(key) = [sensorData; nextSensorData];
                             end
+                            % if non-scalar struct array, return the same
+                            if size(response.sensorData(i).data, 1) > 1
+                                concatenatedStruct = table2struct(struct2table(concatenatedStruct));
+                            end
                             response.sensorData(i).data = concatenatedStruct;
                             break;
                         end
@@ -151,7 +155,11 @@ classdef MultiPage < handle
                     responseData = response.data.(key);
                     if length(responseData) == 1 || isa(responseData, 'char')
                         if isa(responseData, 'char')
-                            responseData = cellstr(char(response.data.(key)));
+                            if isempty(char(response.data.(key)))
+                                responseData = repmat({''}, size(response.data, 1), 1);
+                            else
+                                responseData = cellstr(char(response.data.(key)));
+                            end
                         else
                             responseData = [response.data.(key)].';
                         end
@@ -165,6 +173,9 @@ classdef MultiPage < handle
                         end
                     end
                     concatenatedStruct.(key) = [responseData; nextResponseData];
+                end
+                if size(response.data, 1) > 1
+                    concatenatedStruct = table2struct(struct2table(concatenatedStruct));
                 end
                 response.data = concatenatedStruct;
             elseif strcmp(service, 'archivefiles')
@@ -261,8 +272,12 @@ classdef MultiPage < handle
                 else
                     if isfield(response.data, 'sampleTime')
                         sampleTimes = {response.data.sampleTime};
-                    else
+                    elseif isfield(response.data, 'sampleTimes')
                         sampleTimes = response.data.sampleTimes;
+                    elseif isfield(response.data, 'times')
+                        sampleTimes = response.data.times;
+                    else
+                        sampleTimes = {response.data.time};
                     end
                     first = sampleTimes(1);
                     last  = sampleTimes(end);
