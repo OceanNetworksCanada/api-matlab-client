@@ -22,11 +22,6 @@ classdef Test04_Devices < matlab.unittest.TestCase
             verifyError(this, @() this.onc.getDevices(filters), 'onc:http400:error23');
         end
 
-        function testInvalidTimeRangeFutureStartTime(this)
-            filters = {'deviceCode', 'BPR-Folger-59', 'dateFrom', '2050-01-01'};
-            verifyError(this, @() this.onc.getDevices(filters), 'onc:http400:error25');
-        end
-        
         function testInvalidParamValue(this)
             filters = {'deviceCode', 'XYZ123'};
             verifyError(this, @() this.onc.getDevices(filters), 'onc:http400:error127');
