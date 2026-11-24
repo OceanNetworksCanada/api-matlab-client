@@ -120,20 +120,20 @@ classdef MultiPage < handle
                             for j = 1 : numel(keys)
                                 key = keys{j};
                                 sensorData = sensor.data.(key);
-                                if length(sensorData) == 1 || isa(sensorData, 'char')
-                                    if isa(sensorData, 'char')
-                                        sensorData = cellstr(char(sensor.data.(key)));
+                                if isa(sensorData, 'char')
+                                    if isempty(char(sensor.data.(key)))
+                                        sensorData = repmat({''}, size(sensor.data, 1), 1);
                                     else
-                                        sensorData = [sensor.data.(key)].';
+                                        sensorData = cellstr(char(sensor.data.(key)));
                                     end
+                                elseif length(sensorData) == 1
+                                    sensorData = [sensor.data.(key)].';
                                 end
                                 nextSensorData = nextSensor.data.(key);
-                                if length(nextSensorData) == 1 || isa(nextSensorData, 'char')
-                                    if isa(nextSensorData, 'char')
-                                        nextSensorData = cellstr(char(nextSensor.data.(key)));
-                                    else
-                                        nextSensorData = [nextSensor.data.(key)].';
-                                    end
+                                if isa(nextSensorData, 'char')
+                                    nextSensorData = cellstr(char(nextSensor.data.(key)));
+                                elseif length(nextSensorData) == 1
+                                    nextSensorData = [nextSensor.data.(key)].';
                                 end
                                 concatenatedStruct.(key) = [sensorData; nextSensorData];
                             end
@@ -153,24 +153,20 @@ classdef MultiPage < handle
                 for i = 1 : numel(keys)
                     key = keys{i};
                     responseData = response.data.(key);
-                    if length(responseData) == 1 || isa(responseData, 'char')
-                        if isa(responseData, 'char')
-                            if isempty(char(response.data.(key)))
-                                responseData = repmat({''}, size(response.data, 1), 1);
-                            else
-                                responseData = cellstr(char(response.data.(key)));
-                            end
+                    if isa(responseData, 'char')
+                        if isempty(char(response.data.(key)))
+                            responseData = repmat({''}, size(response.data, 1), 1);
                         else
-                            responseData = [response.data.(key)].';
+                            responseData = cellstr(char(response.data.(key)));
                         end
+                    elseif length(responseData) == 1
+                        responseData = [response.data.(key)].';
                     end
                     nextResponseData = nextResponse.data.(key);
-                    if length(nextResponseData) == 1 || isa(nextResponseData, 'char')
-                        if isa(nextResponseData, 'char')
-                            nextResponseData = cellstr(char(nextResponse.data.(key)));
-                        else
-                            nextResponseData = [nextResponse.data.(key)].';
-                        end
+                    if isa(nextResponseData, 'char')
+                        nextResponseData = cellstr(char(nextResponse.data.(key)));
+                    elseif length(nextResponseData) == 1
+                        nextResponseData = [nextResponse.data.(key)].';
                     end
                     concatenatedStruct.(key) = [responseData; nextResponseData];
                 end
