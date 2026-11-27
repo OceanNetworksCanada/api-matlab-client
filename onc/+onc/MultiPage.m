@@ -114,13 +114,34 @@ classdef MultiPage < handle
                     nextSensor = struct();
                     for i2 = 1 : numel(nextResponse.sensorData)
                         nextSensor = nextResponse.sensorData(i2);
-
                         if strcmp(nextSensor.sensorCode, sensorCode)
                             % append all keys and stop
+                            concatenatedStruct = {};
                             for j = 1 : numel(keys)
                                 key = keys{j};
-                                response.sensorData(i).data.(key) = [sensor.data.(key); nextSensor.data.(key)];
+                                sensorData = sensor.data.(key);
+                                if isa(sensorData, 'char')
+                                    if isempty(char(sensor.data.(key)))
+                                        sensorData = repmat({''}, size(sensor.data, 1), 1);
+                                    else
+                                        sensorData = cellstr(char(sensor.data.(key)));
+                                    end
+                                elseif length(sensorData) == 1
+                                    sensorData = [sensor.data.(key)].';
+                                end
+                                nextSensorData = nextSensor.data.(key);
+                                if isa(nextSensorData, 'char')
+                                    nextSensorData = cellstr(char(nextSensor.data.(key)));
+                                elseif length(nextSensorData) == 1
+                                    nextSensorData = [nextSensor.data.(key)].';
+                                end
+                                concatenatedStruct.(key) = [sensorData; nextSensorData];
                             end
+                            % if non-scalar struct array, return the same
+                            if size(response.sensorData(i).data, 1) > 1
+                                concatenatedStruct = table2struct(struct2table(concatenatedStruct));
+                            end
+                            response.sensorData(i).data = concatenatedStruct;
                             break;
                         end
                     end
@@ -128,11 +149,31 @@ classdef MultiPage < handle
                 
             elseif strcmp(service, 'rawdata')
                 keys = fieldnames(response.data);
-                
+                concatenatedStruct = {};
                 for i = 1 : numel(keys)
                     key = keys{i};
-                    response.data.(key) = [response.data.(key); nextResponse.data.(key)];
+                    responseData = response.data.(key);
+                    if isa(responseData, 'char')
+                        if isempty(char(response.data.(key)))
+                            responseData = repmat({''}, size(response.data, 1), 1);
+                        else
+                            responseData = cellstr(char(response.data.(key)));
+                        end
+                    elseif length(responseData) == 1
+                        responseData = [response.data.(key)].';
+                    end
+                    nextResponseData = nextResponse.data.(key);
+                    if isa(nextResponseData, 'char')
+                        nextResponseData = cellstr(char(nextResponse.data.(key)));
+                    elseif length(nextResponseData) == 1
+                        nextResponseData = [nextResponse.data.(key)].';
+                    end
+                    concatenatedStruct.(key) = [responseData; nextResponseData];
                 end
+                if size(response.data, 1) > 1
+                    concatenatedStruct = table2struct(struct2table(concatenatedStruct));
+                end
+                response.data = concatenatedStruct;
             elseif strcmp(service, 'archivefiles')
                 response.files = [response.files; nextResponse.files];
             end
@@ -175,9 +216,27 @@ classdef MultiPage < handle
             % Returns: (int) Number of rows or samples per sensor
             switch service
                 case "scalardata"
-                    count = length(response.sensorData(1).data.sampleTimes);
+                    if isfield(response.sensorData(1).data, 'sampleTime')
+                        sampleTime = response.sensorData(1).data.sampleTime;
+                    else
+                        sampleTime = response.sensorData(1).data.sampleTimes;
+                    end
+                    if isa(sampleTime, 'cell')
+                        count = length(sampleTime);
+                    else
+                        count = length({response.sensorData(1).data.sampleTime});
+                    end
                 case "rawdata"
-                    count = length(response.data.times);
+                    if isfield(response.data, 'times')
+                        count = length(response.data.times);
+                    else
+                        sampleTime = response.data.sampleTime;
+                        if isa(sampleTime, 'cell')
+                            count = length(sampleTime);
+                        else
+                            count = length({response.data.sampleTime});
+                        end
+                    end
                 case "archivefiles"
                     count = length(response.files);
                 otherwise
@@ -199,12 +258,25 @@ classdef MultiPage < handle
             % grab the first and last sample times
             if isScalar || isRaw
                 if isScalar
-                    sampleTimes = response.sensorData(1).data.sampleTimes;
+                    if isfield(response.sensorData(1).data, 'sampleTime')
+                        sampleTimes = {response.sensorData(1).data.sampleTime};
+                    else
+                        sampleTimes = response.sensorData(1).data.sampleTimes;
+                    end
                     first = sampleTimes{1};
                     last  = sampleTimes{end};
                 else
-                    first = response.data.times(1);
-                    last  = response.data.times(end);
+                    if isfield(response.data, 'sampleTime')
+                        sampleTimes = {response.data.sampleTime};
+                    elseif isfield(response.data, 'sampleTimes')
+                        sampleTimes = response.data.sampleTimes;
+                    elseif isfield(response.data, 'times')
+                        sampleTimes = response.data.times;
+                    else
+                        sampleTimes = {response.data.time};
+                    end
+                    first = sampleTimes(1);
+                    last  = sampleTimes(end);
                 end    
             elseif isArchive
                 row0 = response.files(1);

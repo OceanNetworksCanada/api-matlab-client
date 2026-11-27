@@ -41,6 +41,25 @@ classdef Test08_RealTime < matlab.unittest.TestCase
                                 'dateFrom', '2019-11-23T00:00:00.000Z', ...
                                 'dateTo', '2019-11-23T00:01:00.000Z', ...
                                 'rowLimit', 25);
+
+        paramsDeviceMultiPagesObject = struct('deviceCode', 'BPR-Folger-59', ...
+                            'dateFrom', '2019-11-23T00:00:00.000Z', ...
+                            'dateTo', '2019-11-23T00:01:00.000Z', ...
+                            'rowLimit', 25, ...
+                            'outputFormat', 'object');
+
+        paramsDeviceMultiPagesArray = struct('deviceCode', 'BPR-Folger-59', ...
+                            'dateFrom', '2019-11-23T00:00:00.000Z', ...
+                            'dateTo', '2019-11-23T00:01:00.000Z', ...
+                            'rowLimit', 25, ...
+                            'outputFormat', 'array');
+
+        paramsDeviceRawObject = struct('deviceCode', 'BPR-Folger-59', ...
+                                'dateFrom', '2019-11-23T00:00:00.000Z', ...
+                                'dateTo', '2019-11-23T00:01:00.000Z', ...
+                                'rowLimit', 25, ...
+                                'outputFormat', 'object');
+
     end
     
     methods (TestClassSetup)
@@ -177,6 +196,20 @@ classdef Test08_RealTime < matlab.unittest.TestCase
             assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
         end
 
+        function testDeviceValidParamsMultiplePagesObject(this)
+            result = this.onc.getDirectByDevice(this.paramsDeviceMultiPagesObject);
+            dataOutput = result.sensorData(1).data;
+            assertTrue(this, isstruct(dataOutput) && ~isscalar(dataOutput), 'Input must be a non-scalar struct array.');
+            assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
+        end
+
+        function testDeviceValidParamsMultiplePagesArray(this)
+            result = this.onc.getDirectByDevice(this.paramsDeviceMultiPagesArray);
+            dataOutput = result.sensorData(1).data;
+            assertTrue(this, isstruct(dataOutput) && isscalar(dataOutput), 'Input must be a scalar struct array.')
+            assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
+        end
+
         %% Testing rawdata device
 
         function testRawDeviceInvalidParamValue(this)
@@ -216,6 +249,14 @@ classdef Test08_RealTime < matlab.unittest.TestCase
             result = this.onc.getDirectRawByDevice(this.paramsDeviceMultiPages);
             assertEqual(this, length(result.data.readings), this.paramsDeviceMultiPages.rowLimit, ...
                         'Test should only return `rowLimit` rows for each sensor.');
+            assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
+        end
+
+        function testRawDeviceValidParamsMultiplePagesObject(this)
+            disp('testing')
+            result = this.onc.getDirectRawByDevice(this.paramsDeviceRawObject);
+            dataOutput = result.data;
+            assertTrue(this, isstruct(dataOutput) && ~isscalar(dataOutput), 'Input must be a non-scalar struct array.');
             assertTrue(this, ~isempty(result.next), 'Test should return multiple pages.');
         end
         
